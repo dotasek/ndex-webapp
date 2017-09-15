@@ -17,21 +17,39 @@ ndexApp.controller('mainController', ['config', 'ndexService', 'ndexUtility', 's
         $scope.main.loggedIn = false;
         $scope.main.showSignIn = true;
 
-        $rootScope.$on('LOGGED_IN', function () {
+        var signInHandler = function () {
             //listener for changes in log in.
             $scope.main.loggedIn = true;
             $scope.main.showSignIn = false;
             $scope.main.userName = sharedProperties.getCurrentUserAccountName();
 
-            var userFirstAndLastNames = ndexUtility.getLoggedInUserFirstAndLastNames();
+            var userFirstAndLastNames = sharedProperties.getLoggedInUserFirstAndLastNames();
             $scope.main.userFirstAndLastNames = userFirstAndLastNames ? "Hi, " + userFirstAndLastNames : "MyAccount";
 
             if ($rootScope.reloadRoute) {
                 delete $rootScope.reloadRoute;
                 $route.reload();
             };
-        });
+        }
 
+        $rootScope.$on('LOGGED_IN', signInHandler);
+
+        var signOutHandler = function () {
+            $scope.main.loggedIn = false;
+            delete $scope.main.userName;
+            if (sharedProperties.getSignonType() == "basic") {
+                ndexUtility.clearUserCredentials();
+                delete $http.defaults.headers.common['Authorization'];
+            } else {
+                gapi.auth2.getAuthInstance().signOut();
+            }
+            sharedProperties.currentNetworkId = null;
+            sharedProperties.currentUserId = null;
+            sharedProperties.setSignedInUser(null);
+            $scope.main.showSignIn = true;
+        }
+
+        $scope.$on('LOGGED_OUT', signOutHandler);
 
         $scope.main.searchString = '';
         $scope.strLength = 0;
@@ -61,15 +79,6 @@ ndexApp.controller('mainController', ['config', 'ndexService', 'ndexUtility', 's
             };
         };
 
-        $scope.$on('LOGGED_OUT', function () {
-            $scope.main.loggedIn = false;
-            delete $scope.main.userName;
-            ndexUtility.clearUserCredentials();
-            sharedProperties.currentNetworkId = null;
-            sharedProperties.currentUserId = null;
-            delete $http.defaults.headers.common['Authorization'];
-            $scope.main.showSignIn = true;
-        });
 
         if( $location.path() == '/' || $location.path() == '/signIn')
             $scope.main.hideSearchBar = true;
@@ -114,6 +123,7 @@ ndexApp.controller('mainController', ['config', 'ndexService', 'ndexUtility', 's
         
         // check configuration parameters loaded from ndex-webapp-config.js;
         // if any of config parameters missing, assign default values
+
         initMissingConfigParams(config);
 
         // "Cite NDEx" menu item is not configurable.
@@ -396,13 +406,6 @@ ndexApp.controller('mainController', ['config', 'ndexService', 'ndexUtility', 's
         //end Search code
 
         //initializions for page refresh
-        var accountName = ndexUtility.getLoggedInUserAccountName();
-        if (accountName) {
-            sharedProperties.setCurrentUser(ndexUtility.getLoggedInUserExternalId(), accountName);
-            $scope.main.userName = accountName;
-            $scope.$emit('LOGGED_IN');
-        }
-
 
         /*----------------------------------------------
          Citing NDEx
@@ -810,6 +813,79 @@ ndexApp.controller('mainController', ['config', 'ndexService', 'ndexUtility', 's
             }
         }
 
+
+        function updateGoogleSigninStatus(isSignedIn) {
+            if (isSignedIn) {
+      //          var curUser = gapi.auth2.getAuthInstance().currentUser.get();
+      //          var profile = curUser.getBasicProfile();
+      //          var id_token = curUser.getAuthResponse().id_token;
+
+                ndexService.authenticateUserWithGoogleIdToken(
+                    function(data) {
+                        registerSignedInUser(data, "google");
+                    },
+                    function(error, status) { //.error(function (data, status, headers, config, statusText) {
+
+                    });
+
+            } else if ( sharedProperties.getSignonType() == 'google'){
+                signOutHandler();
+            }
+        }
+
+        function initClient() {
+            gapi.client.init({
+                //     apiKey: apiKey,
+                //     discoveryDocs: discoveryDocs,
+                clientId: '802839698598-mrrd3iq3jl06n6c2fo1pmmc8uugt9ukq.apps.googleusercontent.com',
+                scope: 'profile email',
+            }).then(function () {
+                // Listen for sign-in state changes.
+                gapi.auth2.getAuthInstance().isSignedIn.listen(updateGoogleSigninStatus);
+                // Handle the initial sign-in state.
+                updateGoogleSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+
+            });
+
+        }
+
+        function registerSignedInUser(data, type) {
+            sharedProperties.setCurrentUser(data.externalId, data.userName);
+            sharedProperties.setSignOnType(type);
+            sharedProperties.setSignedInUser(data);
+
+            $rootScope.$emit('LOGGED_IN');
+            if ( $scope.signIn != null) {
+                $scope.signIn.userName = null;
+                $scope.signIn.password = null;
+            }
+        }
+
+        // Initialize app.
+
+
+        var accountName = ndexUtility.getLoggedInUserAccountName();
+        if (accountName) {
+            var password = ndexUtility.getLoggedInUserAuthToken();
+
+            ndexService.authenticateUserV2(accountName, password,
+                function(data) {
+                    registerSignedInUser(data, "basic");
+                },
+                function(error, status) {
+
+                    if (error && error.message) {
+                        $scope.credentials['errorMessage'] = error.message;
+                    } else {
+                        $scope.credentials['errorMessage'] = "Unexpected error during sign-in with status " + error.status;
+                    };
+                    errorHandler();
+                });
+
+        }
+
+
+        gapi.load('client:auth2', initClient);
 
 
     }]);

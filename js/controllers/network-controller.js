@@ -24,7 +24,7 @@ ndexApp.controller('networkController',
             $scope.networkController = {};
 
             var networkController  = $scope.networkController;
-            networkController.isLoggedInUser = (ndexUtility.getLoggedInUserAccountName() != null);
+            networkController.isLoggedInUser = ( sharedProperties.getSignedInUser() != null);
 
             networkController.privilegeLevel = "None";
             networkController.currentNetworkId = networkExternalId;
@@ -2355,7 +2355,7 @@ ndexApp.controller('networkController',
                                     ;
                                 });
 
-                            if (networkController.isLoggedInUser && (network['ownerUUID'] == ndexUtility.getLoggedInUserExternalId()) ) {
+                            if (networkController.isLoggedInUser && (network['ownerUUID'] == sharedProperties.getCurrentUserId()) ) {
                                 networkController.isNetworkOwner = true;
                                 networkController.getStatusOfShareableURL();
                             };
@@ -2710,7 +2710,7 @@ ndexApp.controller('networkController',
                     return;
                 };
 
-                var userId = ndexUtility.getLoggedInUserExternalId();
+                var userId = sharedProperties.getCurrentUserId(); //ndexUtility.getLoggedInUserExternalId();
 
                 ndexService.getAllNetworkSetsOwnedByUserV2(userId,
                     function (networkSets) {

@@ -93,7 +93,7 @@ ndexApp.controller('networkSetController',
                 };
 
                 if (networkSetController.isLoggedInUser &&
-                    (networkSetInformation['ownerId'] == ndexUtility.getLoggedInUserExternalId()) ) {
+                    (networkSetInformation['ownerId'] == sharedProperties.getCurrentUserId()) ) {
                     networkSetController.isSetOwner = true;
 
                     // status of the Shareable URl is shown in the Share Set modal that pops up after
@@ -332,7 +332,7 @@ ndexApp.controller('networkSetController',
 
 
     networkSetController.getAllNetworkSetsOwnedByUser = function (successHandler, errorHandler) {
-        var userId = ndexUtility.getLoggedInUserExternalId();
+        var userId = sharedProperties.getCurrentUserId(); //ndexUtility.getLoggedInUserExternalId();
 
         ndexService.getAllNetworkSetsOwnedByUserV2(userId,
             function (networkSets) {

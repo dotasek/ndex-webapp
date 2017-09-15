@@ -7,8 +7,8 @@ ndexApp.controller('myAccountController',
             //              Process the URL to get application state
             //-----------------------------------------------------------------------------------
             
-            var identifier = ndexUtility.getUserCredentials()["externalId"];
-            //var identifier = sharedProperties.getCurrentUserId(); //$routeParams.identifier;
+          //  var identifier = ndexUtility.getUserCredentials()["externalId"];
+            var identifier = sharedProperties.getCurrentUserId(); //$routeParams.identifier;
 
 
             //              CONTROLLER INTIALIZATIONS
@@ -16,7 +16,7 @@ ndexApp.controller('myAccountController',
 
             $scope.myAccountController = {};
             var myAccountController = $scope.myAccountController;
-            myAccountController.isLoggedInUser = (ndexUtility.getLoggedInUserAccountName() != null);
+            myAccountController.isLoggedInUser = (sharedProperties.getSignedInUser() != null);
             myAccountController.identifier = identifier;
             myAccountController.loggedInIdentifier = sharedProperties.getCurrentUserId();
             myAccountController.displayedUser = {};

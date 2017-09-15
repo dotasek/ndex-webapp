@@ -6,8 +6,8 @@
 'use strict';
 
 angular.module('ndexServiceApp')
-    .service('uiMisc', ['ndexNavigation', 'ndexService', 'ndexUtility',
-                function (ndexNavigation, ndexService, ndexUtility) {
+    .service('uiMisc', ['ndexNavigation', 'ndexService', 'ndexUtility','sharedProperties',
+                function (ndexNavigation, ndexService, ndexUtility, sharedProperties) {
 
         var self = this;
 
@@ -309,7 +309,7 @@ angular.module('ndexServiceApp')
             set['networkCount'] = set['networks'] ? set['networks'].length : 0;
 
             // if user is a set owner, ahow if networksa is showcased
-            var loggedInUserId = ndexUtility.getLoggedInUserExternalId();
+            var loggedInUserId = sharedProperties.getCurrentUserId(); //ndexUtility.getLoggedInUserExternalId();
 
             if (loggedInUserId && loggedInUserId == set.ownerId) {
                 var showCased = set['showcased'];

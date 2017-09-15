@@ -3,8 +3,8 @@
  */
 
 
-ndexServiceApp.factory('networkService', ['cxNetworkUtils', 'config', 'ndexConfigs', 'ndexUtility', 'ndexHelper', 'provenanceService', 'ndexService','$http', '$q',
-    function (cxNetworkUtils, config, ndexConfigs, ndexUtility, ndexHelper, provenanceService, ndexService, $http, $q) {
+ndexServiceApp.factory('networkService', ['sharedProperties','cxNetworkUtils', 'config', 'ndexConfigs', 'ndexUtility', 'ndexHelper', 'provenanceService', 'ndexService','$http', '$q',
+    function (sharedProperties, cxNetworkUtils, config, ndexConfigs, ndexUtility, ndexHelper, provenanceService, ndexService, $http, $q) {
 
         var factory = {};
         
@@ -25,10 +25,15 @@ ndexServiceApp.factory('networkService', ['cxNetworkUtils', 'config', 'ndexConfi
         };
 
 
-        var getEncodedUser = function () {
-            if (ndexUtility.getLoggedInUserAccountName)
-                return btoa(ndexUtility.getLoggedInUserAccountName() + ":" + ndexUtility.getLoggedInUserAuthToken());
-            else
+        var getAuthHeader = function () {
+            var signInType = sharedProperties.getSignonType();
+            if ( signInType == null)
+                return null;
+            if (signInType == 'basic')
+                return 'basic ' + btoa(sharedProperties.getSignedInUser()['userName'] + ":" + ndexUtility.getLoggedInUserAuthToken());
+            else if (signInType == 'google') {
+                return 'bearer ' +  gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
+            } else
                 return null;
         };
 
@@ -572,7 +577,9 @@ ndexServiceApp.factory('networkService', ['cxNetworkUtils', 'config', 'ndexConfi
             });
 
             XHR.open('POST', url);
-            XHR.setRequestHeader("Authorization", "Basic " + getEncodedUser());
+            var authValue = getAuthHeader();
+            if ( authValue != null )
+            XHR.setRequestHeader("Authorization", authValue );
 
             // We just send our FormData object, HTTP headers are set automatically
             var foo =  XHR.send(FD);

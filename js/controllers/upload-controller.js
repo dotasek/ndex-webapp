@@ -14,7 +14,7 @@ ndexApp.controller('uploadController',
             var uploadController = $scope.uploadController;
 
             uploadController.displayedUser = {};
-            var userUUID = ndexUtility.getLoggedInUserExternalId();
+            var userUUID = sharedProperties.getCurrentUserId(); //ndexUtility.getLoggedInUserExternalId();
 
             var config = angular.injector(['ng', 'ndexServiceApp']).get('config');
             uploadController.uploadSizeLimit = config.uploadSizeLimit;

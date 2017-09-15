@@ -131,7 +131,7 @@ ndexServiceApp.factory('ndexService',
                 // Server API: Update User
                 // PUT /user/{userId}
 
-                var userId = ndexUtility.getLoggedInUserExternalId();
+                var userId = sharedProperties.getCurrentUserId(); // ndexUtility.getLoggedInUserExternalId();
                 var url = "/user/" + userId;
 
                 if (user.website)
@@ -167,6 +167,23 @@ ndexServiceApp.factory('ndexService',
                 config['headers'] = headers;
                 this.sendHTTPRequest(config, successHandler, errorHandler);
             }
+
+            factory.authenticateUserWithGoogleIdToken = function ( successHandler, errorHandler) {
+                // Server API: Authenticate User
+                // GET /user?valid=true&setAuthHeader=false
+
+                var url = "/user?valid=true&setAuthHeader=false";
+
+
+                var res = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse();
+                var headers = {
+                    'Authorization': "Bearer " + res.id_token
+                };
+                var config = ndexConfigs.getGetConfigV2(url, null);
+                config['headers'] = headers;
+                this.sendHTTPRequest(config, successHandler, errorHandler);
+            }
+
 
             factory.changePasswordV2 = function(newPassword, successHandler, errorHandler) {
                 // Server API: Change Password
@@ -1241,16 +1258,17 @@ ndexServiceApp.factory('ndexUtility', function () {
         loggedInUser.lastName  = lastName;
         loggedInUser.externalId = externalId;
         loggedInUser.token = password;
-        localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
+        if ( password != null )
+            localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
     };
 
-    factory.getLoggedInUserExternalId = function () {
+/*    factory.getLoggedInUserExternalId = function () {
         var loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
         if (!loggedInUser) {
             return null;
         };
         return (loggedInUser.externalId) ? loggedInUser.externalId : null;
-    };
+    }; */
 
     factory.getLoggedInUserAccountName = function () {
         var loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
@@ -1260,7 +1278,8 @@ ndexServiceApp.factory('ndexUtility', function () {
         return (loggedInUser.userName) ? loggedInUser.userName : null;
     };
 
-    factory.getLoggedInUserFirstAndLastNames = function () {
+    // deprecated by cj. use the sharedProperties.getLoggedInUserFirstAndLastNames instead.
+  /*  factory.getLoggedInUserFirstAndLastNames = function () {
         var loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
         if (!loggedInUser) loggedInUser = {};
         return loggedInUser.firstName + " " + loggedInUser.lastName;
@@ -1272,7 +1291,7 @@ ndexServiceApp.factory('ndexUtility', function () {
             return null;
         };
         return loggedInUser.firstName ? loggedInUser.firstName : null;
-    };
+    }; */
     
     factory.getLoggedInUserAuthToken = function () {
         var loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
@@ -1283,6 +1302,7 @@ ndexServiceApp.factory('ndexUtility', function () {
     };
 
 
+/*  commented out by CJ. Doesn't seem to be used anywhere
     factory.getEncodedUser = function () {
         var userCredentials = ndexUtility.getUserCredentials();
 
@@ -1291,8 +1311,8 @@ ndexServiceApp.factory('ndexUtility', function () {
         };
 
         return btoa(userCredentials['userName'] + ":" + userCredentials['token']);
-    };
-    
+    }; */
+
 
     /*-----------------------------------------------------------------------*
      * networks
@@ -1342,11 +1362,23 @@ ndexServiceApp.factory('ndexUtility', function () {
 /****************************************************************************
  * $http configuration service
  ****************************************************************************/
-ndexServiceApp.factory('ndexConfigs', function (config, ndexUtility) {
+ndexServiceApp.factory('ndexConfigs', [ 'config', 'ndexUtility', 'sharedProperties', "$window", function (config, ndexUtility, sharedProperties,$window) {
     var factory = {};
 
     var ndexServerURI = config.ndexServerUri;
 
+
+    /* an utility function for the configs  */
+
+    var setAuthorizationHeader = function ( config) {
+        if (factory.getEncodedUser()) {
+            config['headers']['Authorization'] = "Basic " + factory.getEncodedUser();
+
+        } else if ( sharedProperties.getCurrentUserId() != null && sharedProperties.getSignonType() == 'google' ) {
+            config['headers']['Authorization'] = "Bearer " + gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
+
+        }
+    }
 
     /*---------------------------------------------------------------------*
      * GET request configuration
@@ -1359,14 +1391,7 @@ ndexServiceApp.factory('ndexConfigs', function (config, ndexUtility) {
                 //Authorization: "Basic " + factory.getEncodedUser()
             }
         };
-        if( factory.getEncodedUser() )
-        {
-            config['headers']['Authorization'] = "Basic " + factory.getEncodedUser();
-        }
-        else
-        {
-            config['headers']['Authorization'] = undefined;
-        }
+        setAuthorizationHeader(config);
         if (queryArgs) {
             config.data = JSON.stringify(queryArgs);
         }
@@ -1383,14 +1408,16 @@ ndexServiceApp.factory('ndexConfigs', function (config, ndexUtility) {
             data: angular.toJson(postData),
             headers: {}
         };
-        if( factory.getEncodedUser() )
+/*        if( factory.getEncodedUser() )
         {
             config['headers']['Authorization'] = "Basic " + factory.getEncodedUser();
         }
         else
         {
             config['headers']['Authorization'] = undefined;
-        }
+        } */
+        setAuthorizationHeader(config);
+
         return config;
     };
 
@@ -1428,14 +1455,16 @@ ndexServiceApp.factory('ndexConfigs', function (config, ndexUtility) {
             //data: angular.toJson(putData),
             headers: {}
         };
-        if( factory.getEncodedUser() )
+        setAuthorizationHeader(config);
+
+/*        if( factory.getEncodedUser() )
         {
             config['headers']['Authorization'] = "Basic " + factory.getEncodedUser();
         }
         else
         {
             config['headers']['Authorization'] = undefined;
-        }
+        } */
         if (putData) {
             if (typeof putData == "string") {
                 config.data = putData;
@@ -1455,14 +1484,16 @@ ndexServiceApp.factory('ndexConfigs', function (config, ndexUtility) {
             url: ndexServerURI + url,
             headers: {}
         };
-        if( factory.getEncodedUser() )
+        setAuthorizationHeader(config);
+
+/*        if( factory.getEncodedUser() )
         {
             config['headers']['Authorization'] = "Basic " + factory.getEncodedUser();
         }
         else
         {
             config['headers']['Authorization'] = undefined;
-        }
+        } */
         if (deleteData) {
             if (typeof deleteData == "string") {
                 config.data = deleteData;
@@ -1491,7 +1522,7 @@ ndexServiceApp.factory('ndexConfigs', function (config, ndexUtility) {
     };
 
     return factory;
-});
+}]);
 
 /****************************************************************************
  * NDEx Helper Service
@@ -1666,8 +1697,8 @@ ndexServiceApp.factory('ndexHelper', function () {
 
     factory.getNodeLabelForReifiedEdge = function(network, term, type) {
         var nodeLabel = "Label: N/A";
-        var subjectUnknown = "Subject Unknown;"
-        var objectUnknown = "Object Unknown;"
+        var subjectUnknown = "Subject Unknown;";
+        var objectUnknown = "Object Unknown;";
 
         if ((typeof network === 'undefined') || (typeof network.edges === 'undefined')  ||
             (typeof term === 'undefined') || (typeof term.edgeId === 'undefined') ||
@@ -2017,7 +2048,7 @@ ndexServiceApp.factory('provenanceVisualizerService', ['ndexService', 'ndexHelpe
                 data: {
                     target: parentEventNode.data.id,
                     source: entityNode.data.id}
-            }
+            };
             elements.edges.push(eventToEntityEdge);
         };
 

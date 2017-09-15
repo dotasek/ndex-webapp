@@ -192,11 +192,11 @@ ndexApp.config(['$routeProvider', function ($routeProvider) {
  */
 
 var checkIfUserHasAccessToTheClickedNetwork =
-    function ($q, $location, $route, ndexUtility, ndexService, ndexNavigation, logInService, $rootScope) {
+    function ($q, $location, $route, ndexUtility, ndexService, ndexNavigation, logInService, $rootScope, sharedProperties) {
 
-     var loggedInUser = ndexUtility.getUserCredentials();
-     var loggedInUserId =
-        (loggedInUser && loggedInUser['externalId']) ? loggedInUser['externalId'] : null;
+     //var loggedInUser = ndexUtility.getUserCredentials();
+     var loggedInUserId = sharedProperties.getCurrentUserId();
+      //  (loggedInUser && loggedInUser['externalId']) ? loggedInUser['externalId'] : null;
      var networkUUID =  $route.current.params.identifier;
 
      var accessKey = ($route.current.params && $route.current.params['accesskey']) ?

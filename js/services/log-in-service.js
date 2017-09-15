@@ -27,6 +27,8 @@ ndexServiceApp.factory('logInService', ['sharedProperties', 'ndexUtility', 'ndex
                                 $modalInstance.dismiss();
                                 sharedProperties.setCurrentUser(data.externalId, data.userName);
                                 ndexUtility.setUserInfo(data.userName, data.firstName, data.lastName, data.externalId, password);
+                                sharedProperties.setSignOnType('basic');
+                                sharedProperties.setSignedInUser(data);
                                 successHandler();
                             },
                             function(error, status) {

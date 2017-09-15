@@ -7,7 +7,7 @@ ndexApp.controller('searchController',
             //---------------------------------------------------------------------
             $scope.searcher = {};
             var searchController = $scope.searcher;
-            searchController.isLoggedInUser = (ndexUtility.getLoggedInUserAccountName() != null);
+            searchController.isLoggedInUser = (sharedProperties.getSignedInUser() != null);
 
             searchController.errors = [];
             searchController.pageSize = 1000000;
@@ -54,8 +54,7 @@ ndexApp.controller('searchController',
             searchController.networkTableRowsSelected = 0;
             searchController.networkSets = [];
 
-            searchController.loggedInUserId = (searchController.isLoggedInUser) ?
-                ndexUtility.getLoggedInUserExternalId() : null;
+            searchController.loggedInUserId = sharedProperties.getCurrentUserId();
 
 
             $(document).ready(function() {
@@ -400,7 +399,7 @@ ndexApp.controller('searchController',
             };
 
             searchController.getAllNetworkSetsOwnedByUser = function (successHandler, errorHandler) {
-                var userId = ndexUtility.getLoggedInUserExternalId();
+                var userId = sharedProperties.getCurrentUserId(); //ndexUtility.getLoggedInUserExternalId();
                 
                 ndexService.getAllNetworkSetsOwnedByUserV2(userId,
                     function (networkSets) {

@@ -13,6 +13,7 @@ ndexApp.controller('signInController', ['config', 'ndexService', 'ndexUtility', 
         $scope.signIn = {};
         $scope.signIn.newUser = {};
 
+
         $scope.signIn.submitSignIn = function () {
             ndexUtility.clearUserCredentials();
 
@@ -22,7 +23,9 @@ ndexApp.controller('signInController', ['config', 'ndexService', 'ndexUtility', 
             ndexService.authenticateUserV2(userName, password,
                  function(data) {
                     sharedProperties.setCurrentUser(data.externalId, data.userName); //this info will have to be sent via emit if we want dynamic info on the nav bar
-                    ndexUtility.setUserInfo(data.userName, data.firstName, data.lastName, data.externalId, $scope.signIn.password);
+                    sharedProperties.setSignedInUser(data);
+                     ndexUtility.setUserInfo(data.userName, data.firstName, data.lastName, data.externalId, $scope.signIn.password);
+
                     $rootScope.$emit('LOGGED_IN');
                     //$location.path("/user/" + data.externalId);
                     $location.path("/myAccount");
@@ -32,13 +35,51 @@ ndexApp.controller('signInController', ['config', 'ndexService', 'ndexUtility', 
                 function(error, status) { //.error(function (data, status, headers, config, statusText) {
 
                     if (error && error.message) {
-                        $scope.signIn.message = error.message;
+                        $sope.signIn.message = error.message;
                     } else {
                         $scope.signIn.message = "Unexpected error during sign-in with status " + error.status;
                     }
             });
         };
-        
+
+
+        $scope.signIn.SignInWithGoogle = function () {
+            ndexUtility.clearUserCredentials();
+
+            gapi.auth2.getAuthInstance().signIn({prompt:'consent select_account'}).then(googleUserHandler, googleFailureHandler);
+        };
+
+
+        var googleUserHandler = function (curUser) {
+
+                ndexService.authenticateUserWithGoogleIdToken(
+                    function(data) {
+                        sharedProperties.setCurrentUser(data.externalId, data.userName);
+                        sharedProperties.setSignOnType("google");
+                        sharedProperties.setSignedInUser(data);
+
+                        $rootScope.$emit('LOGGED_IN');
+
+                        $location.path("/myAccount");
+                        $scope.signIn.userName = null;
+                        $scope.signIn.password = null;
+
+                    },
+                    function(error, status) { //.error(function (data, status, headers, config, statusText) {
+
+                        if (error && error.message) {
+                            $scope.signIn.message = error.message;
+                        } else {
+                            $scope.signIn.message = "Unexpected error during sign-in with status " + error.status;
+                        }
+                    });
+
+        }
+
+        var googleFailureHandler = function ( err) {
+            if ( err.error != "popup_closed_by_user")
+                $scope.signIn.message = "Failed to authenticate with google: " + err.error;
+        }
 
         $scope.signIn.cancel = function () {
             $location.path("/");
