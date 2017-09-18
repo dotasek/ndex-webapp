@@ -5,7 +5,7 @@ ndexApp.controller('mainController', ['config', 'ndexService', 'ndexUtility', 's
               $scope, $location, $modal, $route, $http, $interval, uiMisc, $rootScope) {
 
         $scope.$on('IdleStart', function() {
-            $scope.main.signout();
+  //          $scope.main.signout();
         });
 
         $scope.showFooter = true;
@@ -820,34 +820,22 @@ ndexApp.controller('mainController', ['config', 'ndexService', 'ndexUtility', 's
       //          var profile = curUser.getBasicProfile();
       //          var id_token = curUser.getAuthResponse().id_token;
 
-                ndexService.authenticateUserWithGoogleIdToken(
-                    function(data) {
-                        registerSignedInUser(data, "google");
-                    },
-                    function(error, status) { //.error(function (data, status, headers, config, statusText) {
+                if ( window.currentSignInType != null && currentSignInType == 'google') {
+                    registerSignedInUser(window.currentNdexUser, 'google');
+                } else {
+                    ndexService.authenticateUserWithGoogleIdToken(
+                        function (data) {
+                            registerSignedInUser(data, "google");
+                        },
+                        function (error, status) { //.error(function (data, status, headers, config, statusText) {
 
-                    });
-
-            } else if ( sharedProperties.getSignonType() == 'google'){
+                        });
+                }
+            } else if ( window.currentSignInType == 'google'){
                 signOutHandler();
             }
         }
 
-        function initClient() {
-            gapi.client.init({
-                //     apiKey: apiKey,
-                //     discoveryDocs: discoveryDocs,
-                clientId: '802839698598-mrrd3iq3jl06n6c2fo1pmmc8uugt9ukq.apps.googleusercontent.com',
-                scope: 'profile email',
-            }).then(function () {
-                // Listen for sign-in state changes.
-                gapi.auth2.getAuthInstance().isSignedIn.listen(updateGoogleSigninStatus);
-                // Handle the initial sign-in state.
-                updateGoogleSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-
-            });
-
-        }
 
         function registerSignedInUser(data, type) {
             sharedProperties.setCurrentUser(data.externalId, data.userName);
@@ -863,12 +851,13 @@ ndexApp.controller('mainController', ['config', 'ndexService', 'ndexUtility', 's
 
         // Initialize app.
 
-
         var accountName = ndexUtility.getLoggedInUserAccountName();
         if (accountName) {
-            var password = ndexUtility.getLoggedInUserAuthToken();
+            registerSignedInUser(window.currentNdexUser, "basic");
 
-            ndexService.authenticateUserV2(accountName, password,
+//            var password = ndexUtility.getLoggedInUserAuthToken();
+
+/*            ndexService.authenticateUserV2(accountName, password,
                 function(data) {
                     registerSignedInUser(data, "basic");
                 },
@@ -880,12 +869,12 @@ ndexApp.controller('mainController', ['config', 'ndexService', 'ndexUtility', 's
                         $scope.credentials['errorMessage'] = "Unexpected error during sign-in with status " + error.status;
                     };
                     errorHandler();
-                });
+                }); */
 
+        } else {
+            gapi.auth2.getAuthInstance().isSignedIn.listen(updateGoogleSigninStatus);
+            updateGoogleSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
         }
-
-
-        gapi.load('client:auth2', initClient);
 
 
     }]);

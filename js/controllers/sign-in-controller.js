@@ -58,6 +58,9 @@ ndexApp.controller('signInController', ['config', 'ndexService', 'ndexUtility', 
                         sharedProperties.setSignOnType("google");
                         sharedProperties.setSignedInUser(data);
 
+                        window.currentNdexUser = data;
+                        window.currentSignInType = 'google';
+
                         $rootScope.$emit('LOGGED_IN');
 
                         $location.path("/myAccount");

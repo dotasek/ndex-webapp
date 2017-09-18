@@ -29,6 +29,9 @@ ndexServiceApp.factory('logInService', ['sharedProperties', 'ndexUtility', 'ndex
                                 ndexUtility.setUserInfo(data.userName, data.firstName, data.lastName, data.externalId, password);
                                 sharedProperties.setSignOnType('basic');
                                 sharedProperties.setSignedInUser(data);
+
+                                window.currentNdexUser = data;
+                                window.currentSignInType = 'google';
                                 successHandler();
                             },
                             function(error, status) {
@@ -41,6 +44,43 @@ ndexServiceApp.factory('logInService', ['sharedProperties', 'ndexUtility', 'ndex
                                 errorHandler();
                             });
                     };
+
+
+                    $scope.signInWithGoogle = function () {
+                        gapi.auth2.getAuthInstance().signIn({prompt:'consent select_account'}).then(googleUserHandler, googleFailureHandler);
+                    };
+
+
+                    var googleUserHandler = function (curUser) {
+
+                        ndexService.authenticateUserWithGoogleIdToken(
+                            function(data) {
+                                sharedProperties.setCurrentUser(data.externalId, data.userName);
+                                sharedProperties.setSignOnType("google");
+                                sharedProperties.setSignedInUser(data);
+
+                                window.currentNdexUser = data;
+                                window.currentSignInType = 'google';
+
+                                successHandler();
+
+                            },
+                            function(error, status) { //.error(function (data, status, headers, config, statusText) {
+
+                                if (error && error.message) {
+                                    $scope.credentials['errorMessage'] = error.message;
+                                } else {
+                                    $scope.credentials['errorMessage'] = "Unexpected error during sign-in with status " + error.status;
+                                };
+                                errorHandler();
+                            });
+
+                    }
+
+                    var googleFailureHandler = function ( err) {
+                        if ( err.error != "popup_closed_by_user")
+                            $scope.signIn.message = "Failed to authenticate with google: " + err.error;
+                    }
 
                 }
             });
