@@ -63,30 +63,9 @@ ndexApp.service('sharedProperties', function () {
         {
             return this.networkView;
         },
-        testMe: function () {
-            return "hello there";
-        },
-
-        setSignedInUser: function (signedInUser) {
-            this.signedInUser = signedInUser;
-        },
-
-        getSignedInUser: function () {
-            return this.signedInUser;
-        },
-
-        // valid type are 'google or basic' right now.
-        setSignOnType : function (type) {
-            this.signOnType = type;
-        },
-
-        getSignonType: function () {
-            return this.signOnType;
-        },
-
         getLoggedInUserFirstAndLastNames: function () {
-            if (this.signedInUser != null) {
-                return this.signedInUser.firstName + " " + this.signedInUser.lastName;
+            if ( window.currentNdexUser != null) {
+                return window.currentNdexUser.firstName + " " + window.currentNdexUser.lastName;
             } else
                 return "";
         }

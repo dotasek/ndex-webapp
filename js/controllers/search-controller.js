@@ -7,7 +7,7 @@ ndexApp.controller('searchController',
             //---------------------------------------------------------------------
             $scope.searcher = {};
             var searchController = $scope.searcher;
-            searchController.isLoggedInUser = (sharedProperties.getSignedInUser() != null);
+            searchController.isLoggedInUser = (window.currentNdexUser != null);
 
             searchController.errors = [];
             searchController.pageSize = 1000000;

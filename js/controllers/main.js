@@ -1,11 +1,12 @@
 // create the controller and inject Angular's $scope
-ndexApp.controller('mainController', ['config', 'ndexService', 'ndexUtility', 'sharedProperties', '$route',
+ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProperties', '$route',
     '$scope', '$location', '$modal', '$route', '$http', '$interval', 'uiMisc', '$rootScope',
-    function (config, ndexService, ndexUtility, sharedProperties, $route,
+    function ( ndexService, ndexUtility, sharedProperties, $route,
               $scope, $location, $modal, $route, $http, $interval, uiMisc, $rootScope) {
 
         $scope.$on('IdleStart', function() {
-  //          $scope.main.signout();
+            if ( window.currentSignInType == 'basic')
+                $scope.main.signout();
         });
 
         $scope.showFooter = true;
@@ -37,7 +38,7 @@ ndexApp.controller('mainController', ['config', 'ndexService', 'ndexUtility', 's
         var signOutHandler = function () {
             $scope.main.loggedIn = false;
             delete $scope.main.userName;
-            if (sharedProperties.getSignonType() == "basic") {
+            if ( window.currentSignInType == "basic") {
                 ndexUtility.clearUserCredentials();
                 delete $http.defaults.headers.common['Authorization'];
             } else {
@@ -45,7 +46,6 @@ ndexApp.controller('mainController', ['config', 'ndexService', 'ndexUtility', 's
             }
             sharedProperties.currentNetworkId = null;
             sharedProperties.currentUserId = null;
-            sharedProperties.setSignedInUser(null);
             $scope.main.showSignIn = true;
         }
 
@@ -124,14 +124,14 @@ ndexApp.controller('mainController', ['config', 'ndexService', 'ndexUtility', 's
         // check configuration parameters loaded from ndex-webapp-config.js;
         // if any of config parameters missing, assign default values
 
-        initMissingConfigParams(config);
+        initMissingConfigParams(window.ndexSettings);
 
         // "Cite NDEx" menu item is not configurable.
-        config.citeNDEx = {};
-        config.citeNDEx.label = "Cite NDEx";
+        window.ndexSettings.citeNDEx = {};
+        window.ndexSettings.citeNDEx.label = "Cite NDEx";
 
 
-        $scope.config = config;
+        $scope.config = window.ndexSettings;
 
         //Test whether the server is up or not.
         $scope.main.serverIsDown = false;
@@ -209,9 +209,9 @@ ndexApp.controller('mainController', ['config', 'ndexService', 'ndexUtility', 's
 
         //The purpose of the heart beat is measure the time since the app was last used.
         var lastHeartbeat = localStorage.getItem('last-heartbeat');
-        if( lastHeartbeat )
+        if( lastHeartbeat && window.currentSignInType == 'basic')
         {
-            if( Date.now() - lastHeartbeat > config.idleTime * 1000 )
+            if( Date.now() - lastHeartbeat > $scope.config.idleTime * 1000 )
                 $scope.main.signout(true); // true = no redirect to home
         }
 
@@ -236,7 +236,8 @@ ndexApp.controller('mainController', ['config', 'ndexService', 'ndexUtility', 's
         };
 
         //Hard-coding the heartbeat as a ratio of the idle time for now. So, a heart-beat will be set
-        $interval(recordHeartbeat, config.idleTime * 10 );
+        if (window.currentSignInType == 'basic')
+            $interval(recordHeartbeat, $scope.config.idleTime * 10 );
 
         //Whenever the browser or a tab containing the app is closed, record the heart beat.
         window.onbeforeunload = function (event)
@@ -816,18 +817,14 @@ ndexApp.controller('mainController', ['config', 'ndexService', 'ndexUtility', 's
 
         function updateGoogleSigninStatus(isSignedIn) {
             if (isSignedIn) {
-      //          var curUser = gapi.auth2.getAuthInstance().currentUser.get();
-      //          var profile = curUser.getBasicProfile();
-      //          var id_token = curUser.getAuthResponse().id_token;
-
-                if ( window.currentSignInType != null && currentSignInType == 'google') {
+               if ( window.currentSignInType != null && currentSignInType == 'google') {
                     registerSignedInUser(window.currentNdexUser, 'google');
                 } else {
                     ndexService.authenticateUserWithGoogleIdToken(
                         function (data) {
                             registerSignedInUser(data, "google");
                         },
-                        function (error, status) { //.error(function (data, status, headers, config, statusText) {
+                        function (error, status) {
 
                         });
                 }
@@ -839,8 +836,6 @@ ndexApp.controller('mainController', ['config', 'ndexService', 'ndexUtility', 's
 
         function registerSignedInUser(data, type) {
             sharedProperties.setCurrentUser(data.externalId, data.userName);
-            sharedProperties.setSignOnType(type);
-            sharedProperties.setSignedInUser(data);
 
             $rootScope.$emit('LOGGED_IN');
             if ( $scope.signIn != null) {
@@ -849,31 +844,8 @@ ndexApp.controller('mainController', ['config', 'ndexService', 'ndexUtility', 's
             }
         }
 
-        // Initialize app.
-
-        var accountName = ndexUtility.getLoggedInUserAccountName();
-        if (accountName) {
-            registerSignedInUser(window.currentNdexUser, "basic");
-
-//            var password = ndexUtility.getLoggedInUserAuthToken();
-
-/*            ndexService.authenticateUserV2(accountName, password,
-                function(data) {
-                    registerSignedInUser(data, "basic");
-                },
-                function(error, status) {
-
-                    if (error && error.message) {
-                        $scope.credentials['errorMessage'] = error.message;
-                    } else {
-                        $scope.credentials['errorMessage'] = "Unexpected error during sign-in with status " + error.status;
-                    };
-                    errorHandler();
-                }); */
-
-        } else {
-            gapi.auth2.getAuthInstance().isSignedIn.listen(updateGoogleSigninStatus);
-            updateGoogleSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+        if (window.currentSignInType != null ) {
+            registerSignedInUser(window.currentNdexUser, window.currentSignInType);
         }
 
 

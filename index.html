@@ -527,9 +527,6 @@
           if (isSignedIn) {
               var curUser = gapi.auth2.getAuthInstance().currentUser.get();
               var id_token = curUser.getAuthResponse().id_token;
-              var initInjector = angular.injector(["ng"]);
-              var $http = initInjector.get("$http");
-              console.log(id_token);
 
               $http({
                   method: 'GET',
@@ -540,14 +537,10 @@
                   }
               )
                   .success(function(data, status, headers, config, statusText) {
-                      window.currentNdexUser = data;
-                      window.currentSignInType = 'google';
-                      angular.bootstrap(document, ['ndexApp']);
+                      startWebApp(data, 'google');
                   })
                   .error(function(error, status, headers, config, statusText) {
-                      delete window.currentNdexUser;
-                      delete window.currentSignInType;
-                      angular.bootstrap(document, ['ndexApp']);
+                      startWebApp(null,null);
                   })
 
           } else {
@@ -563,14 +556,10 @@
                       }
                   )
                       .success(function(data, status, headers, config, statusText) {
-                          window.currentNdexUser = data;
-                          window.currentSignInType = 'basic';
-                          angular.bootstrap(document, ['ndexApp']);
+                          startWebApp(data, 'basic');
                       })
                       .error(function(error, status, headers, config, statusText) {
-                          delete window.currentNdexUser;
-                          delete window.currentSignInType;
-                          angular.bootstrap(document, ['ndexApp']);
+                          startWebApp(null,null);
                       })
               } else {
                   angular.bootstrap(document, ['ndexApp']);
@@ -579,6 +568,17 @@
       });
 
   }
+
+  function startWebApp (signedInUser, type) {
+
+      if ( signedInUser !=null ) {
+          window.currentNdexUser = signedInUser;
+          window.currentSignInType = type;
+      }
+      angular.bootstrap(document, ['ndexApp']);
+
+  }
+
 
   gapi.load('client:auth2', initClient);
 

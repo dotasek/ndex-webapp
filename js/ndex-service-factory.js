@@ -1374,7 +1374,7 @@ ndexServiceApp.factory('ndexConfigs', [ 'config', 'ndexUtility', 'sharedProperti
         if (factory.getEncodedUser()) {
             config['headers']['Authorization'] = "Basic " + factory.getEncodedUser();
 
-        } else if ( sharedProperties.getCurrentUserId() != null && sharedProperties.getSignonType() == 'google' ) {
+        } else if ( window.currentSignInType != null && window.currentSignInType == 'google' ) {
             config['headers']['Authorization'] = "Bearer " + gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
 
         }

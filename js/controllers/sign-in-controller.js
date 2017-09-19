@@ -1,10 +1,10 @@
-ndexApp.controller('signInController', ['config', 'ndexService', 'ndexUtility', 'sharedProperties',
+ndexApp.controller('signInController', [ 'ndexService', 'ndexUtility', 'sharedProperties',
     '$scope', '$location', '$modal', '$route', '$http', '$interval', '$rootScope',
-    function (config, ndexService, ndexUtility, sharedProperties,
+    function (ndexService, ndexUtility, sharedProperties,
               $scope, $location, $modal, $route, $http, $interval, $rootScope) {
 
 
-        $scope.config = config;
+        $scope.config = window.ndexSettings;
 
 //---------------------------------------------
 // SignIn / SignUp Handler
@@ -23,7 +23,6 @@ ndexApp.controller('signInController', ['config', 'ndexService', 'ndexUtility', 
             ndexService.authenticateUserV2(userName, password,
                  function(data) {
                     sharedProperties.setCurrentUser(data.externalId, data.userName); //this info will have to be sent via emit if we want dynamic info on the nav bar
-                    sharedProperties.setSignedInUser(data);
                      ndexUtility.setUserInfo(data.userName, data.firstName, data.lastName, data.externalId, $scope.signIn.password);
 
                     $rootScope.$emit('LOGGED_IN');
@@ -55,8 +54,6 @@ ndexApp.controller('signInController', ['config', 'ndexService', 'ndexUtility', 
                 ndexService.authenticateUserWithGoogleIdToken(
                     function(data) {
                         sharedProperties.setCurrentUser(data.externalId, data.userName);
-                        sharedProperties.setSignOnType("google");
-                        sharedProperties.setSignedInUser(data);
 
                         window.currentNdexUser = data;
                         window.currentSignInType = 'google';
@@ -68,7 +65,7 @@ ndexApp.controller('signInController', ['config', 'ndexService', 'ndexUtility', 
                         $scope.signIn.password = null;
 
                     },
-                    function(error, status) { //.error(function (data, status, headers, config, statusText) {
+                    function(error, status) {
 
                         if (error && error.message) {
                             $scope.signIn.message = error.message;

@@ -27,11 +27,9 @@ ndexServiceApp.factory('logInService', ['sharedProperties', 'ndexUtility', 'ndex
                                 $modalInstance.dismiss();
                                 sharedProperties.setCurrentUser(data.externalId, data.userName);
                                 ndexUtility.setUserInfo(data.userName, data.firstName, data.lastName, data.externalId, password);
-                                sharedProperties.setSignOnType('basic');
-                                sharedProperties.setSignedInUser(data);
 
                                 window.currentNdexUser = data;
-                                window.currentSignInType = 'google';
+                                window.currentSignInType = 'basic';
                                 successHandler();
                             },
                             function(error, status) {
@@ -56,8 +54,6 @@ ndexServiceApp.factory('logInService', ['sharedProperties', 'ndexUtility', 'ndex
                         ndexService.authenticateUserWithGoogleIdToken(
                             function(data) {
                                 sharedProperties.setCurrentUser(data.externalId, data.userName);
-                                sharedProperties.setSignOnType("google");
-                                sharedProperties.setSignedInUser(data);
 
                                 window.currentNdexUser = data;
                                 window.currentSignInType = 'google';
@@ -65,7 +61,7 @@ ndexServiceApp.factory('logInService', ['sharedProperties', 'ndexUtility', 'ndex
                                 successHandler();
 
                             },
-                            function(error, status) { //.error(function (data, status, headers, config, statusText) {
+                            function(error, status) {
 
                                 if (error && error.message) {
                                     $scope.credentials['errorMessage'] = error.message;

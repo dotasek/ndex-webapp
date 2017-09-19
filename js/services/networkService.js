@@ -26,12 +26,11 @@ ndexServiceApp.factory('networkService', ['sharedProperties','cxNetworkUtils', '
 
 
         var getAuthHeader = function () {
-            var signInType = sharedProperties.getSignonType();
-            if ( signInType == null)
+            if ( currentSignInType == null)
                 return null;
-            if (signInType == 'basic')
-                return 'basic ' + btoa(sharedProperties.getSignedInUser()['userName'] + ":" + ndexUtility.getLoggedInUserAuthToken());
-            else if (signInType == 'google') {
+            if (currentSignInType == 'basic')
+                return 'basic ' + btoa(window.currentNdexUser['userName'] + ":" + ndexUtility.getLoggedInUserAuthToken());
+            else if (currentSignInType == 'google') {
                 return 'bearer ' +  gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
             } else
                 return null;

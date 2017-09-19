@@ -276,8 +276,7 @@ var checkIfUserHasAccessToTheClickedNetwork =
 
 //Idle
 ndexApp.config(["IdleProvider", function(IdleProvider) {
-    var config = angular.injector(['ng', 'ndexServiceApp']).get('config');
-    IdleProvider.idle( config.idleTime );
+    IdleProvider.idle( window.ndexSettings.idleTime );
 }]);
 
 ndexApp.run(function(Idle){
