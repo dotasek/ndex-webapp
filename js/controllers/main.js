@@ -814,7 +814,7 @@ ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProp
             }
         }
 
-
+/*
         function updateGoogleSigninStatus(isSignedIn) {
             if (isSignedIn) {
                if ( window.currentSignInType != null && currentSignInType == 'google') {
@@ -832,7 +832,7 @@ ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProp
                 signOutHandler();
             }
         }
-
+*/
 
         function registerSignedInUser(data, type) {
             sharedProperties.setCurrentUser(data.externalId, data.userName);

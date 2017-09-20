@@ -25,6 +25,9 @@ ndexApp.controller('signInController', [ 'ndexService', 'ndexUtility', 'sharedPr
                     sharedProperties.setCurrentUser(data.externalId, data.userName); //this info will have to be sent via emit if we want dynamic info on the nav bar
                      ndexUtility.setUserInfo(data.userName, data.firstName, data.lastName, data.externalId, $scope.signIn.password);
 
+                     window.currentNdexUser = data;
+                     window.currentSignInType = 'basic';
+
                     $rootScope.$emit('LOGGED_IN');
                     //$location.path("/user/" + data.externalId);
                     $location.path("/myAccount");

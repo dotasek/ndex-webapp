@@ -3,14 +3,14 @@
  */
 
 
-ndexServiceApp.factory('networkService', ['sharedProperties','cxNetworkUtils', 'config', 'ndexConfigs', 'ndexUtility', 'ndexHelper', 'provenanceService', 'ndexService','$http', '$q',
-    function (sharedProperties, cxNetworkUtils, config, ndexConfigs, ndexUtility, ndexHelper, provenanceService, ndexService, $http, $q) {
+ndexServiceApp.factory('networkService', ['sharedProperties','cxNetworkUtils', 'ndexConfigs', 'ndexUtility', 'ndexHelper', 'provenanceService', 'ndexService','$http', '$q',
+    function (sharedProperties, cxNetworkUtils, ndexConfigs, ndexUtility, ndexHelper, provenanceService, ndexService, $http, $q) {
 
         var factory = {};
-        
+
         var currentNetworkSummary = undefined;
 
-        var ndexServerURI = config.ndexServerUri;
+        var ndexServerURI = window.ndexSettings.ndexServerUri;
 
         //var localNiceCXNetwork ;  // the copy of CX network that we use for display
         

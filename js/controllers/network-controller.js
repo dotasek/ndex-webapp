@@ -1,9 +1,9 @@
 ndexApp.controller('networkController',
-    ['config','provenanceService','networkService', 'ndexService', 'ndexConfigs', 'cyService','cxNetworkUtils',
+    ['provenanceService','networkService', 'ndexService', 'ndexConfigs', 'cyService','cxNetworkUtils',
          'ndexUtility', 'ndexHelper', 'ndexNavigation',
         'sharedProperties', '$scope', '$routeParams', '$modal', '$modalStack',
         '$route', '$location', 'uiGridConstants', 'uiMisc', /*'$filter', '$location','$q',*/
-        function (config, provenanceService, networkService, ndexService, ndexConfigs, cyService, cxNetworkUtils,
+        function ( provenanceService, networkService, ndexService, ndexConfigs, cyService, cxNetworkUtils,
                    ndexUtility, ndexHelper, ndexNavigation,
                   sharedProperties, $scope, $routeParams, $modal, $modalStack,
                   $route , $location, uiGridConstants, uiMisc /*, $filter /*, $location, $q */)
@@ -2004,7 +2004,7 @@ ndexApp.controller('networkController',
                 networkController.queryErrors = [];
 
                 startSpinner();
-                var edgeLimit = config.networkQueryLimit;
+                var edgeLimit = window.ndexSettings.networkQueryLimit;
                 networkService.neighborhoodQuery(networkController.currentNetworkId, accesskey, networkController.searchString, networkController.searchDepth.value, edgeLimit)
                     .success(
                         function (network) {
@@ -2050,7 +2050,7 @@ ndexApp.controller('networkController',
                             if (error.status != 0) {
                                 if( error.data.message == "Error in queryForSubnetwork: Result set is too large for this query.")
                                 {
-                                    networkController.queryErrors.push("Error Querying: The maximum query size is " + config.networkQueryLimit);
+                                    networkController.queryErrors.push("Error Querying: The maximum query size is " + window.ndexSettings.networkQueryLimit);
                                 }
                                 else
                                 {
@@ -2148,7 +2148,7 @@ ndexApp.controller('networkController',
                 networkController.queryWarnings = [];
                 networkController.queryErrors = [];
 
-                var networkQueryLimit = config.networkQueryLimit;
+                var networkQueryLimit = window.ndexSettings.networkQueryLimit;
 
                 startSpinner();
 
@@ -2234,7 +2234,7 @@ ndexApp.controller('networkController',
                             if (error.status != 0) {
                                 if( error.data.message == "Error in queryForSubnetwork: Result set is too large for this query.")
                                 {
-                                    networkController.queryErrors.push("Error Querying: The maximum query size is " + config.networkQueryLimit);
+                                    networkController.queryErrors.push("Error Querying: The maximum query size is " + window.ndexSettings.networkQueryLimit);
                                 }
                                 else
                                 {

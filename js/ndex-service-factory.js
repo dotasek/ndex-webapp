@@ -8,12 +8,12 @@
 var ndexServiceApp = angular.module('ndexServiceApp');
 
 ndexServiceApp.factory('ndexService',
-    ['sharedProperties', 'config', 'ndexConfigs', 'ndexUtility', 'ndexHelper', '$http', '$q', '$resource',
-        function (sharedProperties, config, ndexConfigs, ndexUtility, ndexHelper, $http, $q, $resource) {
+    ['sharedProperties', 'ndexConfigs', 'ndexUtility', 'ndexHelper', '$http', '$q', '$resource',
+        function (sharedProperties, ndexConfigs, ndexUtility, ndexHelper, $http, $q, $resource) {
             // define and initialize factory object
             var factory = {};
 
-            var ndexServerURI = config.ndexServerUri;
+            var ndexServerURI = window.ndexSettings.ndexServerUri;
 
             factory.getNdexServerUri = function()
             {
@@ -1362,10 +1362,10 @@ ndexServiceApp.factory('ndexUtility', function () {
 /****************************************************************************
  * $http configuration service
  ****************************************************************************/
-ndexServiceApp.factory('ndexConfigs', [ 'config', 'ndexUtility', 'sharedProperties', "$window", function (config, ndexUtility, sharedProperties,$window) {
+ndexServiceApp.factory('ndexConfigs', [ 'ndexUtility', 'sharedProperties', "$window", function ( ndexUtility, sharedProperties,$window) {
     var factory = {};
 
-    var ndexServerURI = config.ndexServerUri;
+    var ndexServerURI = window.ndexSettings.ndexServerUri;
 
 
     /* an utility function for the configs  */
@@ -1388,7 +1388,6 @@ ndexServiceApp.factory('ndexConfigs', [ 'config', 'ndexUtility', 'sharedProperti
             method: 'GET',
             url: ndexServerURI + url,
             headers: {
-                //Authorization: "Basic " + factory.getEncodedUser()
             }
         };
         setAuthorizationHeader(config);
@@ -1408,14 +1407,7 @@ ndexServiceApp.factory('ndexConfigs', [ 'config', 'ndexUtility', 'sharedProperti
             data: angular.toJson(postData),
             headers: {}
         };
-/*        if( factory.getEncodedUser() )
-        {
-            config['headers']['Authorization'] = "Basic " + factory.getEncodedUser();
-        }
-        else
-        {
-            config['headers']['Authorization'] = undefined;
-        } */
+
         setAuthorizationHeader(config);
 
         return config;
@@ -1457,14 +1449,6 @@ ndexServiceApp.factory('ndexConfigs', [ 'config', 'ndexUtility', 'sharedProperti
         };
         setAuthorizationHeader(config);
 
-/*        if( factory.getEncodedUser() )
-        {
-            config['headers']['Authorization'] = "Basic " + factory.getEncodedUser();
-        }
-        else
-        {
-            config['headers']['Authorization'] = undefined;
-        } */
         if (putData) {
             if (typeof putData == "string") {
                 config.data = putData;
@@ -1486,14 +1470,6 @@ ndexServiceApp.factory('ndexConfigs', [ 'config', 'ndexUtility', 'sharedProperti
         };
         setAuthorizationHeader(config);
 
-/*        if( factory.getEncodedUser() )
-        {
-            config['headers']['Authorization'] = "Basic " + factory.getEncodedUser();
-        }
-        else
-        {
-            config['headers']['Authorization'] = undefined;
-        } */
         if (deleteData) {
             if (typeof deleteData == "string") {
                 config.data = deleteData;
