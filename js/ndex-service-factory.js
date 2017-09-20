@@ -1212,6 +1212,17 @@ ndexServiceApp.factory('ndexUtility', function () {
 
     factory.networks = []; //revise: meant for saving multiple networks
 
+    factory.getAuthHeaderValue = function () {
+        if ( currentSignInType == null)
+            return null;
+        if (currentSignInType == 'basic')
+            return 'Basic ' + btoa(window.currentNdexUser['userName'] + ":" + ndexUtility.getLoggedInUserAuthToken());
+        else if (currentSignInType == 'google') {
+            return 'Bearer ' +  gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
+        } else
+            return null;
+    };
+
 
     /*-----------------------------------------------------------------------*
      * user credentials and ID

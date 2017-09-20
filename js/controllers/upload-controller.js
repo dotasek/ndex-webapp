@@ -110,7 +110,11 @@ ndexApp.controller('uploadController',
                 url: ndexService.getNetworkUploadURI(),
                 alias: "CXNetworkStream",
                 headers: {
-                    Authorization: "Basic " + ndexConfigs.getEncodedUser()
+                    Authorization: ndexUtility.getAuthHeaderValue()
+                     /*   window.currentNdexUser == null ? "" :
+                            ( (window.currentSignInType == 'basic') ?
+                              ("Basic " + ndexConfigs.getEncodedUser() ) :
+                                ("Bearer " + gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token)) */
                 }
             });
 

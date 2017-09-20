@@ -38,15 +38,15 @@ ndexServiceApp.factory('logInService', ['sharedProperties', 'ndexUtility', 'ndex
                                     $scope.credentials['errorMessage'] = error.message;
                                 } else {
                                     $scope.credentials['errorMessage'] = "Unexpected error during sign-in with status " + error.status;
-                                };
+                                }
                                 errorHandler();
                             });
-                    };
+                    }
 
 
                     $scope.signInWithGoogle = function () {
                         gapi.auth2.getAuthInstance().signIn({prompt:'consent select_account'}).then(googleUserHandler, googleFailureHandler);
-                    };
+                    }
 
 
                     var googleUserHandler = function (curUser) {
@@ -67,7 +67,7 @@ ndexServiceApp.factory('logInService', ['sharedProperties', 'ndexUtility', 'ndex
                                     $scope.credentials['errorMessage'] = error.message;
                                 } else {
                                     $scope.credentials['errorMessage'] = "Unexpected error during sign-in with status " + error.status;
-                                };
+                                }
                                 errorHandler();
                             });
 

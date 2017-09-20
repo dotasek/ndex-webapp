@@ -25,17 +25,6 @@ ndexServiceApp.factory('networkService', ['sharedProperties','cxNetworkUtils', '
         };
 
 
-        var getAuthHeader = function () {
-            if ( currentSignInType == null)
-                return null;
-            if (currentSignInType == 'basic')
-                return 'basic ' + btoa(window.currentNdexUser['userName'] + ":" + ndexUtility.getLoggedInUserAuthToken());
-            else if (currentSignInType == 'google') {
-                return 'bearer ' +  gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
-            } else
-                return null;
-        };
-
         factory.getNetworkSummaryFromNdexV2 = function (networkId,accesskey) {
 
             // The $http timeout property takes a deferred value that can abort AJAX request
@@ -576,7 +565,7 @@ ndexServiceApp.factory('networkService', ['sharedProperties','cxNetworkUtils', '
             });
 
             XHR.open('POST', url);
-            var authValue = getAuthHeader();
+            var authValue = ndexUtility.getAuthHeaderValue();
             if ( authValue != null )
             XHR.setRequestHeader("Authorization", authValue );
 
