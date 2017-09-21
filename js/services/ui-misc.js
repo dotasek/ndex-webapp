@@ -271,7 +271,7 @@ angular.module('ndexServiceApp')
             var link =
                 ndexService.getNdexServerUri() + "/network/" + rowEntity.externalId + "?download=true";
 
-            if (accountController.isLoggedInUser && rowEntity.Visibility &&
+/*            if (accountController.isLoggedInUser && rowEntity.Visibility &&
                 (rowEntity.Visibility.toLowerCase() == 'private'))
             {
                 var userCredentials = ndexUtility.getUserCredentials();
@@ -283,9 +283,25 @@ angular.module('ndexServiceApp')
                 var password = userCredentials['token'];
 
                 link = link.replace("http://", "http://" + userName + ":" + password + "@");
-            };
+            }; */
 
-            return link;
+            if (window.currentSignInType == 'basic')
+            {
+                var userCredentials = ndexUtility.getUserCredentials();
+
+                if (!userCredentials || !userCredentials['userName'] || !userCredentials['token']) {
+                    return link;
+                }
+                var userName = userCredentials['userName'];
+                var password = userCredentials['token'];
+
+                link = link.replace("http://", "http://" + userName + ":" + password + "@");
+            } else if ( window.currentSignInType == 'google') {
+
+               link = link + "?id_token=" + gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
+            }
+
+          return link;
         };
 
         self.showSetInfo = function(set) {

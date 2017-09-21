@@ -677,7 +677,7 @@ ndexServiceApp.factory('ndexService',
             );
 
             /* -------------------------- old 1.3 methods  ---------------------------- */
-            factory.getNetworkApi = function(successHandler, errorHandler)
+ /*           factory.getNetworkApi = function(successHandler, errorHandler)
             {
                 NetworkResource.getApi({}, successHandler, errorHandler);
             };
@@ -696,7 +696,7 @@ ndexServiceApp.factory('ndexService',
             factory.getNumberOfBelNetworkNamespaces = function(externalId, successHandler, errorHandler) {
                 handleAuthorizationHeader();
                 NetworkResource.getNumberOfBelNetworkNamespaces({identifier: externalId}, null, successHandler, errorHandler);
-            };
+            };  */
             /* -------------------------- older 1.3 methods  -------------------------- */
 
 
