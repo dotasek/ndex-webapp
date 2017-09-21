@@ -15,7 +15,7 @@ ndexApp.controller('userController',
 
             $scope.userController = {};
             var userController = $scope.userController;
-            userController.isLoggedInUser = (ndexUtility.getLoggedInUserAccountName() != null);
+            userController.isLoggedInUser = (window.currentNdexUser != null);
             userController.identifier = identifier;
             userController.loggedInIdentifier = sharedProperties.getCurrentUserId();
             userController.displayedUser = {};

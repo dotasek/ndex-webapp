@@ -22,7 +22,7 @@ ndexApp.controller('networkSetController',
 
     networkSetController.networkTableRowsSelected = 0;
 
-    networkSetController.isLoggedInUser = (ndexUtility.getLoggedInUserAccountName() != null);
+    networkSetController.isLoggedInUser = (window.currentNdexUser != null);
 
     networkSetController.isSetOwner = false;
 
