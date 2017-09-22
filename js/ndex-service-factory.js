@@ -99,13 +99,13 @@ ndexServiceApp.factory('ndexService',
                 UserResource.getApi({}, successHandler, errorHandler);
             };
 
-            function handleAuthorizationHeader()
+  /*          function handleAuthorizationHeader()
             {
                 if (ndexConfigs.getEncodedUser())
                     $http.defaults.headers.common['Authorization'] = 'Basic ' + ndexConfigs.getEncodedUser();
                 else
                     $http.defaults.headers.common['Authorization'] = undefined;
-            }
+            } */
 
             factory.createUserV2 = function (user, successHandler, errorHandler) {
                 // Server API: Create User
@@ -1216,7 +1216,7 @@ ndexServiceApp.factory('ndexUtility', function () {
         if ( currentSignInType == null)
             return null;
         if (currentSignInType == 'basic')
-            return 'Basic ' + btoa(window.currentNdexUser['userName'] + ":" + ndexUtility.getLoggedInUserAuthToken());
+            return 'Basic ' + btoa(window.currentNdexUser['userName'] + ":" + factory.getLoggedInUserAuthToken());
         else if (currentSignInType == 'google') {
             return 'Bearer ' +  gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
         } else
@@ -1382,10 +1382,11 @@ ndexServiceApp.factory('ndexConfigs', [ 'ndexUtility', 'sharedProperties', "$win
     /* an utility function for the configs  */
 
     var setAuthorizationHeader = function ( config) {
-        if (factory.getEncodedUser()) {
+
+        if (window.currentSignInType == 'basic') {
             config['headers']['Authorization'] = "Basic " + factory.getEncodedUser();
 
-        } else if ( window.currentSignInType != null && window.currentSignInType == 'google' ) {
+        } else if ( window.currentSignInType == 'google' ) {
             config['headers']['Authorization'] = "Bearer " + gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
 
         }
