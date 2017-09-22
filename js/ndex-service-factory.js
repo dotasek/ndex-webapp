@@ -1213,11 +1213,11 @@ ndexServiceApp.factory('ndexUtility', function () {
     factory.networks = []; //revise: meant for saving multiple networks
 
     factory.getAuthHeaderValue = function () {
-        if ( currentSignInType == null)
+        if ( window.currentSignInType == null)
             return null;
-        if (currentSignInType == 'basic')
+        if (window.currentSignInType == 'basic')
             return 'Basic ' + btoa(window.currentNdexUser['userName'] + ":" + factory.getLoggedInUserAuthToken());
-        else if (currentSignInType == 'google') {
+        else if (window.currentSignInType == 'google') {
             return 'Bearer ' +  gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
         } else
             return null;
@@ -1383,12 +1383,9 @@ ndexServiceApp.factory('ndexConfigs', [ 'ndexUtility', 'sharedProperties', "$win
 
     var setAuthorizationHeader = function ( config) {
 
-        if (window.currentSignInType == 'basic') {
-            config['headers']['Authorization'] = "Basic " + factory.getEncodedUser();
-
-        } else if ( window.currentSignInType == 'google' ) {
-            config['headers']['Authorization'] = "Bearer " + gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
-
+        var authHeaderValue = ndexUtility.getAuthHeaderValue();
+        if ( authHeaderValue != null) {
+            config['headers']['Authorization'] = authHeaderValue;
         }
     }
 
