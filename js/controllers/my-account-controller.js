@@ -1546,14 +1546,15 @@ ndexApp.controller('myAccountController',
                 return "#/network/" + networkUUID;
             };
 
-            $scope.createDynamicLink= function(rowEntity) {
+            $scope.downloadNetwork= function(rowEntity) {
 
-                console.log(rowEntity.externalId);
+                uiMisc.downloadCXNetwork(rowEntity.externalId);
+
             }
 
-            $scope.getNetworkDownloadLink = function(rowEntity) {
+      /*      $scope.getNetworkDownloadLink = function(rowEntity) {
                 return uiMisc.getNetworkDownloadLink(myAccountController, rowEntity);
-            };
+            }; */
 
             $scope.isOwnerOfNetwork = function(networkOwnerUUID)
             {

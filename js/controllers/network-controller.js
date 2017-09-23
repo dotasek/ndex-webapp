@@ -516,7 +516,7 @@ ndexApp.controller('networkController',
             };
             */
 
-            $scope.getNetworkDownloadLink = function(currentNetwork) {
+       /*     $scope.getNetworkDownloadLink = function(currentNetwork) {
                 //var visibility = networkController.currentNetwork.visibility;
                 if (currentNetwork) {
                     var rowEntity = {
@@ -527,7 +527,11 @@ ndexApp.controller('networkController',
                 };
 
                 return;
-            };
+            }; */
+
+            $scope.downloadNetwork = function () {
+                uiMisc.downloadCXNetwork(networkExternalId);
+            }
 
             var parseNdexMarkupValue = function ( value ) {
                 return {n:  value.replace(/(\[(.*)\])?\(.*\)$/, '$2'),

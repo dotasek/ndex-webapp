@@ -266,6 +266,35 @@ angular.module('ndexServiceApp')
         };
 
 
+        self.downloadCXNetwork = function(networkId) {
+
+            var anchor = document.createElement('a');
+
+            if ( window.currentSignInType=='google')
+                anchor.setAttribute('href', ndexService.getNdexServerUri() + "/network/" + networkId +
+                                "?download=true&id_token=" +
+                    gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token);
+            else if (window.currentSignInType == 'basic') {
+                var link = ndexService.getNdexServerUri() + "/network/" + networkId +
+                                "?download=true";
+
+                var userCredentials = ndexUtility.getUserCredentials();
+
+                var userName = userCredentials['userName'];
+                var password = userCredentials['token'];
+
+                link = link.replace("http://", "http://" + userName + ":" + password + "@");
+                anchor.setAttribute('href', link);
+            } else
+                anchor.setAttribute('href', ndexService.getNdexServerUri() + "/network/" +
+                                networkId + "?download=true");
+
+         //   anchor.setAttribute('target', "_blank");
+            anchor.click();
+            anchor.remove();
+
+        }
+
         self.getNetworkDownloadLink = function(accountController, rowEntity) {
 
             var link =
