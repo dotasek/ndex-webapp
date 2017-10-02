@@ -1109,7 +1109,7 @@ ndexApp.controller('networkController',
             networkController.genericInfoModal = function(title, message)
             {
                 var   modalInstance = $modal.open({
-                templateUrl: 'pages/generic-info-modal.html',
+                templateUrl: 'views/generic-info-modal.html',
                 scope: $scope,
 
                 controller: function($scope, $modalInstance) {
@@ -2096,7 +2096,7 @@ ndexApp.controller('networkController',
                 $route.reload();
             };
 
-            // this is used by showNetworkSetsModal directive in ui-services.js for adding
+            // this is used by showNetworkSetsModal directive in ui-services.scripts for adding
             // selected networks to selected sets.  In network-controller there is only one "selected" network
             // (the current one), so we add it to the list and return to the caller,
             networkController.getIDsOfSelectedNetworks = function () {
@@ -2108,7 +2108,7 @@ ndexApp.controller('networkController',
             networkController.saveQueryResult = function() {
 
                 var  modalInstanceSave = $modal.open({
-                    templateUrl: 'pages/directives/confirmationModal.html',
+                    templateUrl: 'views/directives/confirmationModal.html',
                     scope: $scope,
                     controller: function($scope, $modalInstance) {
                         $scope.title = 'Save query result?';

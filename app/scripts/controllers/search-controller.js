@@ -98,7 +98,7 @@ ndexApp.controller('searchController',
                 return $("<html>"+html+"</html>").text();
 
                 /*
-                // convert HTML to markdown; toMarkdown is defined in to-markdown.min.js
+                // convert HTML to markdown; toMarkdown is defined in to-markdown.min.scripts
                 var markDown = toMarkdown(html);
 
                 // after using toMarkdown() at previous statement, markDown var can still contain
@@ -185,18 +185,18 @@ ndexApp.controller('searchController',
             };
             
             const NETWORK_COLUMN_FIELDS = [
-                { field: '  ', enableFiltering: false, maxWidth: 42, cellTemplate: 'pages/gridTemplates/networkStatus.html', visible: true },
-                { field: 'Network Name', enableFiltering: true, cellTemplate: 'pages/gridTemplates/networkName.html'},
-                { field: ' ', enableFiltering: false, width:40, cellTemplate: 'pages/gridTemplates/downloadNetwork.html' },
+                { field: '  ', enableFiltering: false, maxWidth: 42, cellTemplate: 'views/gridTemplates/networkStatus.html', visible: true },
+                { field: 'Network Name', enableFiltering: true, cellTemplate: 'views/gridTemplates/networkName.html'},
+                { field: ' ', enableFiltering: false, width:40, cellTemplate: 'views/gridTemplates/downloadNetwork.html' },
                 //{ field: 'Format', enableFiltering: true, maxWidth:63 },
-                { field: 'Ref.', enableFiltering: false, maxWidth: 45, cellTemplate: 'pages/gridTemplates/reference.html' },
-                { field: 'Disease', enableFiltering: true, width: 68, cellTemplate: 'pages/gridTemplates/disease.html'},
-                { field: 'Tissue',  enableFiltering: true, maxWidth: 65, cellTemplate: 'pages/gridTemplates/tissue.html'},
+                { field: 'Ref.', enableFiltering: false, maxWidth: 45, cellTemplate: 'views/gridTemplates/reference.html' },
+                { field: 'Disease', enableFiltering: true, width: 68, cellTemplate: 'views/gridTemplates/disease.html'},
+                { field: 'Tissue',  enableFiltering: true, maxWidth: 65, cellTemplate: 'views/gridTemplates/tissue.html'},
                 { field: 'Nodes', enableFiltering: false, maxWidth:70 },
                 { field: 'Edges', enableFiltering: false, maxWidth:70 },
                 { field: 'Visibility', enableFiltering: true, maxWidth:70 },
                 { field: 'Owner', enableFiltering: true, width:80,
-                    cellTemplate: 'pages/gridTemplates/ownedBy.html'},
+                    cellTemplate: 'views/gridTemplates/ownedBy.html'},
                 { field: 'Last Modified', enableFiltering: false, maxWidth:120, cellFilter: "date:'short'" },
 
                 { field: 'description', enableFiltering: false,  visible: false},
@@ -468,7 +468,7 @@ ndexApp.controller('searchController',
             const USER_COLUMN_FIELDS = [
                 {
                     field: 'User Name',
-                    cellTemplate: 'pages/gridTemplates/userName.html'
+                    cellTemplate: 'views/gridTemplates/userName.html'
                 },
                 { field: 'First Name'},
                 { field: 'Last Name'},
@@ -591,11 +591,11 @@ ndexApp.controller('searchController',
 
             const GROUP_COLUMN_FIELDS = [
                 { field: 'Group Name',
-                    cellTemplate: 'pages/gridTemplates/groupName.html'},
+                    cellTemplate: 'views/gridTemplates/groupName.html'},
                 /*
                 {
                     field: 'Group Account',
-                    cellTemplate: 'pages/gridTemplates/groupName.html'
+                    cellTemplate: 'views/gridTemplates/groupName.html'
                 },
                 */
                 { field: 'Description'}

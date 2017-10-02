@@ -80,7 +80,7 @@
                     };
 
                     $modal.open({
-                        templateUrl: 'pages/confirmationModal.html',
+                        templateUrl: 'views/confirmationModal.html',
                         controller: ConfirmCtrl
                     });
 
@@ -89,7 +89,7 @@
                 factory.genericInfoModal = function(title, message)
                 {
                     var modalInstance = $modal.open({
-                        templateUrl: 'pages/generic-info-modal.html',
+                        templateUrl: 'views/generic-info-modal.html',
                         backdrop: 'static',
 
                         controller: function($scope, $modalInstance) {
@@ -107,7 +107,7 @@
                 factory.networkInfoModal = function(network)
                 {
                     var modalInstance = $modal.open({
-                        templateUrl: 'pages/networkInfoModal.html',
+                        templateUrl: 'views/networkInfoModal.html',
 
                         controller: function($scope, $modalInstance) {
 
@@ -130,7 +130,7 @@
                 factory.networkSetInfoModal = function(set)
                 {
                     var modalInstance = $modal.open({
-                        templateUrl: 'pages/networkSetInfoModal.html',
+                        templateUrl: 'views/networkSetInfoModal.html',
 
                         controller: function($scope, $modalInstance) {
 
@@ -173,7 +173,7 @@
 
                 $scope.openMe = function() {
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/createGroupModal.html',
+                        templateUrl: 'views/directives/createGroupModal.html',
                         scope: $scope
                     });
                 };
@@ -247,7 +247,7 @@
                     $scope.title = 'Create Network Set';
 
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/createNetworkSetModal.html',
+                        templateUrl: 'views/directives/createNetworkSetModal.html',
                         scope: $scope
                     });
                 };
@@ -353,7 +353,7 @@
                     };
 
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/editNetworkSetModal.html',
+                        templateUrl: 'views/directives/editNetworkSetModal.html',
                         scope: $scope
                     });
                 };
@@ -419,7 +419,7 @@
                 networkSetController: '=',
             },
             restrict: 'A',
-            templateUrl: 'pages/directives/shareNetworkSetModal.html',
+            templateUrl: 'views/directives/shareNetworkSetModal.html',
             controller: function($scope, $attrs, $modal, $location, ndexService) {
                 var modalInstance;
 
@@ -487,10 +487,10 @@
                 ndexClass: '='
             },
             restrict: 'E',
-            templateUrl: 'pages/directives/accountImage.html'
+            templateUrl: 'views/directives/accountImage.html'
             /*
             link: function($attrs) {
-                if (!$attrs.ndexSrc) $attrs.ndexSrc = 'img/no-pic.jpg';
+                if (!$attrs.ndexSrc) $attrs.ndexSrc = 'images/no-pic.jpg';
             }
             */
         }
@@ -503,7 +503,7 @@
                 ndexClass: '='
             },
             restrict: 'E',
-            templateUrl: 'pages/directives/ndexNavigation.html',
+            templateUrl: 'views/directives/ndexNavigation.html',
             transclude: true,
             controller: function($scope, $location) {
                 $scope.location = $location;
@@ -529,7 +529,7 @@
 
                 $scope.openMe = function() {
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/editUserModal.html',
+                        templateUrl: 'views/directives/editUserModal.html',
                         scope: $scope
                     });
                 };
@@ -598,7 +598,7 @@
                 $scope.errors = null;
                 $scope.openMe = function() {
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/editGroupModal.html',
+                        templateUrl: 'views/directives/editGroupModal.html',
                         scope: $scope
                     });
                 };
@@ -669,7 +669,7 @@
                     initializeListOfCollections();
 
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/showNetworkSetsModal.html',
+                        templateUrl: 'views/directives/showNetworkSetsModal.html',
                         scope: $scope
                     });
                 };
@@ -803,7 +803,7 @@
                 ndexData: '='
             },
             restrict: 'E',
-            templateUrl: 'pages/directives/invite-members.html',
+            templateUrl: 'views/directives/invite-members.html',
             transclude: true,
             controller: function($scope, $attrs, $modal, $location, ndexService, $route) {
                 var modalInstance;
@@ -895,7 +895,7 @@
             },
             restrict: 'E',
             transclude: true,
-            templateUrl: 'pages/directives/informationModal.html',
+            templateUrl: 'views/directives/informationModal.html',
             controller: function($scope, $modal) {
                 var modalInstance;
                 var task = $scope.ndexData;
@@ -928,7 +928,7 @@
             },
             restrict: 'E',
             transclude: true,
-            templateUrl: 'pages/directives/sentRequest.html',
+            templateUrl: 'views/directives/sentRequest.html',
             controller: function($scope, $modal, $route, ndexService) {
                 var modalInstance;
                 $scope.errors = null;
@@ -1010,7 +1010,7 @@
 
             restrict: 'E',
             transclude: true,
-            templateUrl: 'pages/directives/receivedRequest.html',
+            templateUrl: 'views/directives/receivedRequest.html',
             controller: function($scope, $modal, $route, ndexService) {
                 var modalInstance;
                 $scope.errors = null;
@@ -1188,7 +1188,7 @@
             controller: function($scope, $modal, $route, ndexService, ndexUtility, sharedProperties) {
                 $scope.openMe = function() {
                     $modal.open({
-                        templateUrl: 'pages/directives/createRequestGroup.html',
+                        templateUrl: 'views/directives/createRequestGroup.html',
                         scope: $scope,
                         backdrop: 'static',
                         controller: function($scope, $modalInstance, $route, ndexService, ndexUtility) {
@@ -1270,7 +1270,7 @@
                 $scope.openMe = function() {
                     intialize();
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/createRequestNetwork.html',
+                        templateUrl: 'views/directives/createRequestNetwork.html',
                         scope: $scope,
                         backdrop: 'static'
                     });
@@ -1440,7 +1440,7 @@
                             } else {
 
                                 modalInstance = $modal.open({
-                                    templateUrl: 'pages/directives/createRequestNetwork.html',
+                                    templateUrl: 'views/directives/createRequestNetwork.html',
                                     scope: $scope,
                                     backdrop: 'static'
                                 });
@@ -1681,7 +1681,7 @@
                         $scope.exporters[0].description : "No description available for this export format.";
 
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/exportNetwork.html',
+                        templateUrl: 'views/directives/exportNetwork.html',
                         scope: $scope,
                         backdrop: 'static'
                     });
@@ -1774,7 +1774,7 @@
                         $scope.exporters[0].description : "No description available for this export format.";
 
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/bulkExportNetwork.html',
+                        templateUrl: 'views/directives/bulkExportNetwork.html',
                         //templateUrl: 'export-network-modal.html',
                         scope: $scope,
                         backdrop: 'static'
@@ -1842,7 +1842,7 @@
                 subNetworkId: "="
             },
             restrict: 'E',
-            templateUrl: 'pages/directives/editNetworkSummaryModal.html',
+            templateUrl: 'views/directives/editNetworkSummaryModal.html',
             transclude: true,
             controller: function($scope, $modal, ndexService, $route, ndexNavigation, sharedProperties) {
                 var modalInstance;
@@ -2053,7 +2053,7 @@
                 text:   '@directiveDescription'
             },
             restrict: 'E',
-            templateUrl: 'pages/directives/showNetworkReferenceModal.html',
+            templateUrl: 'views/directives/showNetworkReferenceModal.html',
             transclude: true,
             
             controller: function($scope, $modal) {
@@ -2142,7 +2142,7 @@
                     $scope.network.submitButtonLabel = $scope.label;
 
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/bulkEditNetworkPropertyModal.html', //'bulk-edit-network-property-modal.html',
+                        templateUrl: 'views/directives/bulkEditNetworkPropertyModal.html', //'bulk-edit-network-property-modal.html',
                         scope: $scope
                     });
                 };
@@ -2430,7 +2430,7 @@
                     $scope.network.showcase = true;
 
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/bulkEditNetworkPropertyModal.html',
+                        templateUrl: 'views/directives/bulkEditNetworkPropertyModal.html',
                         scope: $scope
                     });
                 };
@@ -2737,7 +2737,7 @@
             },
             restrict: 'A',
             transclude: true,
-            templateUrl: 'pages/directives/bulkNetworkAccessModal.html',
+            templateUrl: 'views/directives/bulkNetworkAccessModal.html',
             controller: function($scope, $attrs, $modal, $location, ndexService) {
                 var modalInstance;
 
@@ -2912,7 +2912,7 @@
                 $scope.openMe = function() {
                     $scope.change = {};
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/changePasswordModal.html',
+                        templateUrl: 'views/directives/changePasswordModal.html',
                         scope: $scope
                     });
                 };
@@ -2973,13 +2973,13 @@
                 ndexData: '='
             },
             restrict: 'E',
-            templateUrl: 'pages/directives/confirmationModal.html',
+            templateUrl: 'views/directives/confirmationModal.html',
             transclude: true,
             controller: function($scope, $modal, $route, ndexService) {
 
                 $scope.openMe = function() {
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/confirmationModal.html',
+                        templateUrl: 'views/directives/confirmationModal.html',
                         scope: $scope,
                         controller: function($scope, $modalInstance, $location, ndexService, ndexUtility) {
                             $scope.title = 'Disaffiliate this Network'
@@ -3029,7 +3029,7 @@
 
                 $scope.openMe = function() {
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/confirmationModal.html',
+                        templateUrl: 'views/directives/confirmationModal.html',
                         scope: $scope,
                         controller: function($scope, $modalInstance, $route, ndexService, ndexUtility, sharedProperties) {
 
@@ -3078,13 +3078,13 @@
                 ndexData: '='
             },
             restrict: 'E',
-            //templateUrl: 'pages/directives/confirmationModal.html',
+            //templateUrl: 'views/directives/confirmationModal.html',
             transclude: true,
             controller: function($scope, $modal, $location) {
 
                 $scope.openMe = function() {
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/confirmationModal.html',
+                        templateUrl: 'views/directives/confirmationModal.html',
                         scope: $scope,
                         controller: function($scope, $modalInstance, $route, ndexService, ndexUtility, sharedProperties) {
 
@@ -3132,7 +3132,7 @@
                 ndexNetworkName: '='
             },
             restrict: 'E',
-            templateUrl: 'pages/directives/downloadBelNamespace.html',
+            templateUrl: 'views/directives/downloadBelNamespace.html',
             transclude: true,
             controller: function($scope, $modal, $location, $http) {
 
@@ -3264,7 +3264,7 @@
 
                 $scope.openMe = function() {
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/confirmationModal.html',
+                        templateUrl: 'views/directives/confirmationModal.html',
                         scope: $scope,
                         controller: function($scope, $modalInstance, $location, ndexService, ndexUtility) {
                             $scope.title = 'Leave '+ $scope.group.groupName;
@@ -3330,7 +3330,7 @@
 
                 $scope.openMe = function() {
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/confirmationModal.html',
+                        templateUrl: 'views/directives/confirmationModal.html',
                         scope: $scope,
                         controller: function($scope, $modalInstance, $route, ndexService, ndexUtility) {
                             $scope.title = 'Delete this Group'
@@ -3372,7 +3372,7 @@
         return {
             scope: {},
             restrict: 'AE',
-            //templateUrl: 'pages/directives/confirmationModal.html',
+            //templateUrl: 'views/directives/confirmationModal.html',
             template: '<button class="dropdown-btn" ng-click="openMe()">Delete Account</span>',
 
 
@@ -3380,7 +3380,7 @@
 
                 $scope.openMe = function() {
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/confirmationModal.html',
+                        templateUrl: 'views/directives/confirmationModal.html',
                         scope: $scope,
                         controller: function($scope, $modalInstance, $location, $route, ndexService, ndexUtility) {
                             $scope.title = 'Delete Your Account'
@@ -3459,7 +3459,7 @@
                 successCall: "&"
             },
             restrict: 'E',
-            templateUrl: 'pages/directives/warningModal.html',
+            templateUrl: 'views/directives/warningModal.html',
             transclude: true,
             controller: function($scope, $modal, $location, ndexService) {
 
@@ -3498,7 +3498,7 @@
                         $scope.canProceed = false;
                         $scope.isProcessing = false;
                         modalInstance = $modal.open({
-                            templateUrl: 'pages/directives/confirmationModal.html',
+                            templateUrl: 'views/directives/confirmationModal.html',
                             scope: $scope,
                             controller: function($scope, $modalInstance, $location, $route, ndexService, ndexUtility) {
                                 $scope.title = adminCheck['title'];
@@ -3524,7 +3524,7 @@
     uiServiceApp.directive('saveSubnetwork', function(){
         return {
             restrict: 'E',
-            templateUrl: 'pages/directives/confirmationModal.html',
+            templateUrl: 'views/directives/confirmationModal.html',
             transclude: true,
             controller: function(sharedProperties, $http, $scope, $modal, $location, ndexService) {
 
@@ -3646,7 +3646,7 @@
 
                 $scope.openMe = function() {
                     modalInstance = $modal.open({
-                        templateUrl: 'pages/directives/confirmationModal.html',
+                        templateUrl: 'views/directives/confirmationModal.html',
                         scope: $scope,
                         controller: function($scope, $modalInstance, $location, $route, ndexService) {
                             $scope.title = 'Save Subnetwork?'
@@ -3689,7 +3689,7 @@
                 isAdmin: "="
             },
             restrict: 'E',
-            templateUrl: 'pages/directives/networkProperty.html',
+            templateUrl: 'views/directives/networkProperty.html',
             transclude: true,
             controller: function($scope, $modal, $location, ndexService) {
 

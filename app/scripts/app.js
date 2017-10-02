@@ -74,54 +74,54 @@ ndexApp.config(['$routeProvider', function ($routeProvider) {
 
         // route for the home page (where sign-in is handled)
         .when('/', {
-            templateUrl: 'pages/home.html',
+            templateUrl: 'views/home.html',
             controller: 'homeController'
         })
         // route for the home page (where sign-in is handled)
         .when('/signIn', {
-            templateUrl: 'pages/signIn.html',
+            templateUrl: 'views/signIn.html',
             controller: 'signInController'
         })
 
         // route for the api page
         .when('/api', {
-            templateUrl: 'pages/api.html',
+            templateUrl: 'views/api.html',
             controller: 'apiController'
         })
 
         //route for search page
         .when('/search', {
-            templateUrl: 'pages/search.html',
+            templateUrl: 'views/search.html',
             controller: 'searchController'
         })
 
         // route for the user page
         .when('/user/:identifier', {
-            templateUrl: 'pages/user.html',
+            templateUrl: 'views/user.html',
             controller: 'userController'
         })
 
         // route for the MyAccount page
         .when('/myAccount', {
-            templateUrl: 'pages/myAccount.html',
+            templateUrl: 'views/myAccount.html',
             controller: 'myAccountController'
         })
             
         // route for the group page
         .when('/group/:identifier', {
-            templateUrl: 'pages/group.html',
+            templateUrl: 'views/group.html',
             controller: 'groupController'
         })
 
         // route for the Network Set
         .when('/networkSet/:identifier', {
-            templateUrl: 'pages/networkSet.html',
+            templateUrl: 'views/networkSet.html',
             controller: 'networkSetController'
         })
 
         // route for the network view page
         .when('/network/:identifier', {
-            templateUrl: 'pages/network.html',
+            templateUrl: 'views/network.html',
             controller: 'networkController',
 
             resolve: {
@@ -132,39 +132,39 @@ ndexApp.config(['$routeProvider', function ($routeProvider) {
             
         // route for the upload page
         .when('/upload', {
-            templateUrl: 'pages/upload.html',
+            templateUrl: 'views/upload.html',
             controller: 'uploadController'
         })
 
         // route to edit network custom properties
         .when('/properties/network/old/:identifier/:subNetworkId', {
-            templateUrl: 'pages/editNetworkProperties.html',
+            templateUrl: 'views/editNetworkProperties.html',
             controller: 'editNetworkPropertiesController'
         })
 
         // route to edit network custom properties
         .when('/properties/network/:identifier/:subNetworkId', {
-            templateUrl: 'pages/editNetworkPropertiesFixedForm.html',
+            templateUrl: 'views/editNetworkPropertiesFixedForm.html',
             controller: 'editNetworkPropertiesFixedFormController'
         })
 
         .when('/access/network/:identifier', {
-            templateUrl: 'pages/manageNetworkAccess.html',
+            templateUrl: 'views/manageNetworkAccess.html',
             controller: 'manageNetworkAccessController'
         })
 
         .when('/access/bulk/network', {
-            templateUrl: 'pages/manageBulkNetworkAccess.html',
+            templateUrl: 'views/manageBulkNetworkAccess.html',
             controller: 'manageBulkNetworkAccessController'
         })
 
         .when('/networkset/:identifier', {
-            templateUrl: 'pages/networkSet.html',
+            templateUrl: 'views/networkSet.html',
             controller: 'networkSetController'
         })
 
         .when('/access/group/:identifier', {
-            templateUrl: 'pages/manageGroupAccess.html',
+            templateUrl: 'views/manageGroupAccess.html',
             controller: 'manageGroupAccessController'
         });
 }]);

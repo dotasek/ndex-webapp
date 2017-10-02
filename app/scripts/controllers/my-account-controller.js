@@ -363,9 +363,9 @@ ndexApp.controller('myAccountController',
             var defineNetworkTable = function()
             {
                 var columnDefs = [
-                    { field: '  ', enableFiltering: false, maxWidth: 42, cellTemplate: 'pages/gridTemplates/networkStatusOnMyAccountPage.html'},
-                    { field: 'Network Name', enableFiltering: true, cellTemplate: 'pages/gridTemplates/networkName.html' },
-                    { field: ' ', enableFiltering: false, width:40, cellTemplate: 'pages/gridTemplates/downloadNetwork.html' },
+                    { field: '  ', enableFiltering: false, maxWidth: 42, cellTemplate: 'views/gridTemplates/networkStatusOnMyAccountPage.html'},
+                    { field: 'Network Name', enableFiltering: true, cellTemplate: 'views/gridTemplates/networkName.html' },
+                    { field: ' ', enableFiltering: false, width:40, cellTemplate: 'views/gridTemplates/downloadNetwork.html' },
 
                     { field: 'Format', enableFiltering: true, maxWidth:77,
                         sort: {
@@ -387,13 +387,13 @@ ndexApp.controller('myAccountController',
                         }
                     },
 
-                    { field: 'Ref.', enableFiltering: false, maxWidth: 45, cellTemplate: 'pages/gridTemplates/reference.html' },
-                    { field: 'Disease', enableFiltering: true, width: 68, cellTemplate: 'pages/gridTemplates/disease.html'},
-                    { field: 'Tissue',  enableFiltering: true, maxWidth: 65, cellTemplate: 'pages/gridTemplates/tissue.html'},
+                    { field: 'Ref.', enableFiltering: false, maxWidth: 45, cellTemplate: 'views/gridTemplates/reference.html' },
+                    { field: 'Disease', enableFiltering: true, width: 68, cellTemplate: 'views/gridTemplates/disease.html'},
+                    { field: 'Tissue',  enableFiltering: true, maxWidth: 65, cellTemplate: 'views/gridTemplates/tissue.html'},
                     //{ field: 'Nodes', enableFiltering: false, maxWidth:70 },
                     { field: 'Edges', enableFiltering: false, maxWidth:70 },
                     { field: 'Visibility', enableFiltering: true, maxWidth:70, cellClass: 'grid-align-cell' },
-                    { field: 'Owner', enableFiltering: true, width:80, cellTemplate: 'pages/gridTemplates/ownedBy.html' },
+                    { field: 'Owner', enableFiltering: true, width:80, cellTemplate: 'views/gridTemplates/ownedBy.html' },
                     { field: 'Last Modified', enableFiltering: false, maxWidth:120,
                         cellFilter: "date:'short'",  sort: {direction: 'desc', priority: 5}
                     },
@@ -404,7 +404,7 @@ ndexApp.controller('myAccountController',
                         cellClass: 'grid-align-cell' },
                     */
 
-                    { field: 'Show', enableFiltering: false, maxWidth: 60, cellTemplate: 'pages/gridTemplates/showCase.html' },
+                    { field: 'Show', enableFiltering: false, maxWidth: 60, cellTemplate: 'views/gridTemplates/showCase.html' },
 
                     { field: 'description', enableFiltering: false,  visible: false},
                     { field: 'externalId',  enableFiltering: false,  visible: false},
@@ -418,15 +418,15 @@ ndexApp.controller('myAccountController',
             {
                 var columnDefs = [
                     { field: 'New',   enableFiltering: true, width: 60, sort: {direction: 'desc', priority: 5},
-                        cellTemplate: 'pages/gridTemplates/taskOrRequestNew.html' },  // , new, etc. cellTemplate: 'pages/gridTemplates/taskStatusOnTasksPage.html'
-                    { field: 'Status', enableFiltering: true, maxWidth: 80, cellTemplate: 'pages/gridTemplates/taskOrRequestStatus.html' },
-                    { field: 'Type', enableFiltering: true,   width: 150, cellTemplate: 'pages/gridTemplates/taskOrRequestType.html' },  // task, sent notif., received notific.
-                    { field: 'Description', enableFiltering: true, cellTemplate: 'pages/gridTemplates/taskOrRequestDescription.html'},
+                        cellTemplate: 'views/gridTemplates/taskOrRequestNew.html' },  // , new, etc. cellTemplate: 'views/gridTemplates/taskStatusOnTasksPage.html'
+                    { field: 'Status', enableFiltering: true, maxWidth: 80, cellTemplate: 'views/gridTemplates/taskOrRequestStatus.html' },
+                    { field: 'Type', enableFiltering: true,   width: 150, cellTemplate: 'views/gridTemplates/taskOrRequestType.html' },  // task, sent notif., received notific.
+                    { field: 'Description', enableFiltering: true, cellTemplate: 'views/gridTemplates/taskOrRequestDescription.html'},
                     { field: 'Created', enableFiltering: false, maxWidth: 120,
                         cellFilter: "date:'short'",  sort: {direction: 'desc', priority: 5}
                     },
                     //{ field: 'Last Accessed', enableFiltering: false, cellFilter: "date:'short'", visible: false },
-                    { field: 'Delete',  enableFiltering: false, maxWidth: 60, cellTemplate: 'pages/gridTemplates/deleteTask.html' },
+                    { field: 'Delete',  enableFiltering: false, maxWidth: 60, cellTemplate: 'views/gridTemplates/deleteTask.html' },
 
                     { field: 'taskId',      enableFiltering: false,  visible: false},
                     { field: 'ownerUUID',   enableFiltering: false,  visible: false},
@@ -546,7 +546,7 @@ ndexApp.controller('myAccountController',
                     return "";
                 }
 
-                // convert HTML to markdown; toMarkdown is defined in to-markdown.min.js
+                // convert HTML to markdown; toMarkdown is defined in to-markdown.min.scripts
                 var markDown = toMarkdown(html);
 
                 // after using toMarkdown() at previous statement, markDown var can still contain
@@ -1222,7 +1222,7 @@ ndexApp.controller('myAccountController',
             myAccountController.genericInfoModal = function(title, message)
             {
                 var   modalInstance = $modal.open({
-                    templateUrl: 'pages/generic-info-modal.html',
+                    templateUrl: 'views/generic-info-modal.html',
                     scope: $scope,
 
                     controller: function($scope, $modalInstance) {
@@ -1240,7 +1240,7 @@ ndexApp.controller('myAccountController',
             myAccountController.confirmDeleteSelectedNetworks = function(deletedHandler, canceledHandler)
             {
                 var   modalInstance = $modal.open({
-                    templateUrl: 'pages/directives/confirmationModal.html',
+                    templateUrl: 'views/directives/confirmationModal.html',
                     scope: $scope,
 
                     controller: function($scope, $modalInstance) {
@@ -1269,7 +1269,7 @@ ndexApp.controller('myAccountController',
             myAccountController.confirmDeleteSelectedSets = function()
             {
                 var   modalInstance = $modal.open({
-                    templateUrl: 'pages/directives/confirmationModal.html',
+                    templateUrl: 'views/directives/confirmationModal.html',
                     scope: $scope,
 
                     controller: function($scope, $modalInstance) {

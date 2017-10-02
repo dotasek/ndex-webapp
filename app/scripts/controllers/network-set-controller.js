@@ -147,18 +147,18 @@ ndexApp.controller('networkSetController',
     var populateNetworkTable = function()
     {
         var columnDefs = [
-            { field: 'Status', enableFiltering: false, maxWidth: 60, cellTemplate: 'pages/gridTemplates/networkStatus.html', visible: false },
-            { field: 'Network Name', enableFiltering: true, cellTemplate: 'pages/gridTemplates/networkName.html'},
-            { field: ' ', enableFiltering: false, width:40, cellTemplate: 'pages/gridTemplates/downloadNetwork.html' },
+            { field: 'Status', enableFiltering: false, maxWidth: 60, cellTemplate: 'views/gridTemplates/networkStatus.html', visible: false },
+            { field: 'Network Name', enableFiltering: true, cellTemplate: 'views/gridTemplates/networkName.html'},
+            { field: ' ', enableFiltering: false, width:40, cellTemplate: 'views/gridTemplates/downloadNetwork.html' },
             //{ field: 'Format', enableFiltering: true, maxWidth:63 },
-            { field: 'Ref.', enableFiltering: false, maxWidth: 45, cellTemplate: 'pages/gridTemplates/reference.html' },
-            { field: 'Disease', enableFiltering: true, width: 68, cellTemplate: 'pages/gridTemplates/disease.html'},
-            { field: 'Tissue',  enableFiltering: true, maxWidth: 65, cellTemplate: 'pages/gridTemplates/tissue.html'},
+            { field: 'Ref.', enableFiltering: false, maxWidth: 45, cellTemplate: 'views/gridTemplates/reference.html' },
+            { field: 'Disease', enableFiltering: true, width: 68, cellTemplate: 'views/gridTemplates/disease.html'},
+            { field: 'Tissue',  enableFiltering: true, maxWidth: 65, cellTemplate: 'views/gridTemplates/tissue.html'},
             { field: 'Nodes', enableFiltering: false, maxWidth: 70 },
             { field: 'Edges', enableFiltering: false, maxWidth: 70 },
             { field: 'Visibility', enableFiltering: true, maxWidth: 70 },
             { field: 'Owner', enableFiltering: true, width:80,
-                cellTemplate: 'pages/gridTemplates/ownedBy.html'},
+                cellTemplate: 'views/gridTemplates/ownedBy.html'},
             { field: 'Last Modified', enableFiltering: false, maxWidth:120, cellFilter: "date:'short'" }
         ];
         $scope.networkGridApi.grid.options.columnDefs = columnDefs;
@@ -171,7 +171,7 @@ ndexApp.controller('networkSetController',
             return "";
         }
 
-        // convert HTML to markdown; toMarkdown is defined in to-markdown.min.js
+        // convert HTML to markdown; toMarkdown is defined in to-markdown.min.scripts
         var markDown = toMarkdown(html);
 
         // after using toMarkdown() at previous statement, markDown var can still contain

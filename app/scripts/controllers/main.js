@@ -121,7 +121,7 @@ ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProp
             return active;
         };
         
-        // check configuration parameters loaded from ndex-webapp-config.js;
+        // check configuration parameters loaded from ndex-webapp-config.scripts;
         // if any of config parameters missing, assign default values
 
         initMissingConfigParams(window.ndexSettings);
@@ -451,7 +451,7 @@ ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProp
          ----------------------------------------------*/
         /*
          * As argument, this function takes one of configurable navigation bar
-         * menu objects specified in ndex-webapp-config.js (i.e., logoLink, aboutLink,
+         * menu objects specified in ndex-webapp-config.scripts (i.e., logoLink, aboutLink,
          * documentationLink, etc), and checks whether this navigation link
          * was configured to follow the link "silently" or warn user about navigating
          * to an external domain.
@@ -507,7 +507,7 @@ ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProp
          $scope.showSearchBar = function() {
 
              var  modalInstance = $modal.open({
-                 templateUrl: 'pages/search-modal.html',
+                 templateUrl: 'views/search-modal.html',
                  //keyboard: true,
                  scope: $scope,
                  windowClass: 'popup_search_bar_modal',
@@ -616,7 +616,7 @@ ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProp
 
         function initMissingConfigParams(config) {
 
-            // check configuration parameters loaded from ndex-webapp-config.js;
+            // check configuration parameters loaded from ndex-webapp-config.scripts;
             // if any of config parameters missing, assign default values
             if (typeof config.requireAuthentication === 'undefined') {
                 config.requireAuthentication = false;
@@ -641,7 +641,7 @@ ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProp
                 config.messages = {};
             }
             if (typeof config.messages.serverDown === 'undefined') {
-                config.messages.serverDown = "<img src='img/maintenance.png'>";
+                config.messages.serverDown = "<images src='images/maintenance.png'>";
             }
 
             //if (typeof config.contactUs === 'undefined') {
@@ -675,7 +675,7 @@ ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProp
             if (typeof config.ndexServerUri === 'undefined') {
                 // ndexServerUri is a required parameter -- give an error message;
                 // replace the messages.serverDown message
-                config.messages.serverDown = "Error in ndex-webapp-config.js:<br>" +
+                config.messages.serverDown = "Error in ndex-webapp-config.scripts:<br>" +
                     "The parameter ndexServerUri is required.<br>" +
                     "Please edit the configuration file to provide this URI."   ;
             }

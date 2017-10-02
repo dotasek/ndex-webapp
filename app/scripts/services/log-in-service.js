@@ -6,7 +6,7 @@ ndexServiceApp.factory('logInService', ['sharedProperties', 'ndexUtility', 'ndex
         factory.showLogInModal = function(message, successHandler, errorHandler)
         {
             var modalInstance = $modal.open({
-                templateUrl: 'pages/logInModal.html',
+                templateUrl: 'views/logInModal.html',
 
                 controller: function($scope, $modalInstance) {
 
