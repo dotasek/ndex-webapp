@@ -1360,7 +1360,7 @@ ndexApp.controller('networkController',
                                     menuList.push(ndexExternalLinks);
                                 };
                             };
-                            /*
+
                             n.qtip({
                                 content:
                                   menuList.join('<br />\n'),
@@ -1376,7 +1376,7 @@ ndexApp.controller('networkController',
                                     }
                                 }
                             });
-                            */
+
                         });
 
                         // handles edges
