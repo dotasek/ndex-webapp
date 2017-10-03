@@ -14,7 +14,8 @@
     "cytoscape-qtip": "2.4.0",
     "lodash": "4.11.2",
     "angular-file-upload": "1.1.6",
-    "font-awesome": "4.3.0"
+    "font-awesome": "4.3.0",
+    "textAngular": "1.5.16"
   },
   "appPath": "app",
   "moduleName": "ndexApp",
