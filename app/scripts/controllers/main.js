@@ -4,10 +4,10 @@ ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProp
     function ( ndexService, ndexUtility, sharedProperties, $route,
               $scope, $location, $modal, $route, $http, $interval, uiMisc, $rootScope) {
 
-        $scope.$on('IdleStart', function() {
+  /*      $scope.$on('IdleStart', function() {
             if ( window.currentSignInType == 'basic')
                 $scope.main.signout();
-        });
+        });  */
 
         $scope.showFooter = true;
 
