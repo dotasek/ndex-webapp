@@ -25,6 +25,8 @@ module.exports = function (grunt) {
     dist: 'dist'
   };
 
+  grunt.loadNpmTasks('grunt-task-symlink');
+
   // Define the configuration for all the tasks
   grunt.initConfig({
 
@@ -427,6 +429,17 @@ module.exports = function (grunt) {
       ]
     },
 
+
+      symlink: {
+          symlink_options: {
+              links: [
+
+                  {
+                      src: '/opt/ndex/conf/ndex-webapp-config.js',
+                      dst: 'dist/ndex-webapp-config.js',
+                      type: 'file'}
+              ]
+          } },
     // Test settings
     karma: {
       unit: {
@@ -482,8 +495,9 @@ module.exports = function (grunt) {
     'cssmin',
     'uglify',
     'filerev',
-    'usemin' /*,
-    'htmlmin' */
+    'usemin' ,
+      'symlink',
+    'htmlmin'
   ]);
 
   grunt.registerTask('default', [
