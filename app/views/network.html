@@ -19,7 +19,7 @@
                 <div id="spinnerGraphId"></div>
                 <div id="messageOverlay"
                      style="float:left; vdisplay: inline-block; position: absolute; top: 20px; right: 20px;font-size: 1.2em; color: #FF0000"
-                   ng-show="networkController.isSample && networkController.sampleSize > 0">(Sample: {{networkController.sampleSize}} edges)</div>
+                     ng-show="networkController.isSample && networkController.sampleSize > 0">(Sample: {{networkController.sampleSize}} edges)</div>
             </div>
             <tabset ng-show="currentView == 'Table'">
                 <div id="spinnerTableId"></div>
@@ -113,15 +113,13 @@
 
 
                 <span class="pull-left" style="margin-top:0.5em"
-                      ng-show="!hideAdvancedSearchLink"
                       ng-if="!networkController.hasMultipleSubNetworks() && !disableQuery">
-                    <a ng-click="hideAdvancedSearchLink=!hideAdvancedSearchLink; activateAdvancedQueryTab()">
+                    <a ng-click="activateAdvancedQueryTab()">
                         <u>Advanced Query</u>
                     </a>
                 </span>
 
                 <span class="pull-left" style="margin-top:0.5em"
-                      ng-show="!hideAdvancedSearchLink"
                       ng-if="networkController.hasMultipleSubNetworks() || disableQuery"
                       title="{{networkController.title}}">
                     <span  style="color:#999999; cursor:not-allowed">
@@ -129,12 +127,12 @@
                     </span>
                 </span>
 
-<!--
-                <a class="pull-left" style="margin-top:0.5em; color:#999999; cursor: not-allowed">
-                    Advanced Query
-                    <images src="images/coming_soon.png">
-                </a>
--->
+                <!--
+                                <a class="pull-left" style="margin-top:0.5em; color:#999999; cursor: not-allowed">
+                                    Advanced Query
+                                    <images src="images/coming_soon.png">
+                                </a>
+                -->
 
             </div>
         </div>
@@ -199,14 +197,14 @@
 
                             <span class="networkPropertyName" ng-show="networkController.isAdmin  && !networkController.hasMultipleSubNetworks()">
                                 <input type="checkbox"
-                                    ng-model="networkController.readOnlyChecked"
-                                    ng-change="readOnlyChanged()"> Read Only
+                                       ng-model="networkController.readOnlyChecked"
+                                       ng-change="readOnlyChanged()"> Read Only
                             </span>
                             <span class="networkPropertyName" ng-show="!networkController.isAdmin || networkController.hasMultipleSubNetworks()">
                                 <input type="checkbox"  disabled readonly
                                        ng-model="networkController.readOnlyChecked"
                                        title=
-                                       "{{networkController.hasMultipleSubNetworks() ?
+                                               "{{networkController.hasMultipleSubNetworks() ?
                                        networkController.title :
                                        'Only network owners can set/unset Read Only flag'}}"> Read Only
                             </span>
@@ -257,19 +255,6 @@
                                 {{networkController.privilegeLevel}}<br/>
                             </span>
 
-                            <!--
-                            <div class="wrapLongLine" ng-if="networkController.isNetworkOwner">
-                                <strong>Share URL: </strong>
-                                <span ng-style="networkController.networkShareURL ? {color:'green'} : {color:'black'}">
-                                    {{networkController.networkShareURL ? 'Active' : 'Inactive'}}
-                                </span>
-                                <button type="button" ng-hide="!networkController.networkShareURL"
-                                        ngclipboard data-clipboard-text="{{networkController.networkShareURL}}"
-                                        ng-click="networkController.showURLInClipboardMessage()"
-                                        class="btn btn-success btn-xs">Copy URL
-                                </button>
-                            </div>
-                            -->
 
                             <span ng-show="networkController.hasMultipleSubNetworks()" style="color:red">
                                 <span class="networkPropertyName">Warning: </span>
@@ -338,25 +323,6 @@
                                         </span>
                                 </div>
 
-                                <!--
-                                <h5 ng-show='!networkController.readOnlyChecked && (networkController.isAdmin || networkController.canEdit)'>
-
-                                    <span ng-if="!networkController.hasMultipleSubNetworks()">
-                                        <a class='btn-link'
-                                           ng-href="{{'#/properties/network/'+networkController.currentNetwork.externalId+'/'+networkController.subNetworkId}}"
-                                           ng-click="setReturnView('network/')">
-                                            Add / Edit Properties
-                                        </a>
-                                    </span>
-
-                                    <span ng-if="networkController.hasMultipleSubNetworks()">
-                                        <span  style="color:#999999; cursor:not-allowed"
-                                               title="This network is part of a Cytoscape collection with  {{networkController.noOfSubNetworks}} subnetworks and cannot be edited in NDEx.">
-                                            Add / Edit Properties
-                                        </span>
-                                    </span>
-                                </h5>
-                                -->
 
                             </div>
                         </div>
@@ -378,9 +344,9 @@
                             <tr ng-repeat-start="node in networkController.selectionContainer.nodes">
                                 <td class="wrappedCell">
                                     <button ng-if="node.$$expanded" ng-click="node.$$expanded = false"
-                                        ng-disabled="getNodeAttributesNames(node).length == 0">-</button>
+                                            ng-disabled="getNodeAttributesNames(node).length == 0">-</button>
                                     <button ng-if="!node.$$expanded" ng-click="node.$$expanded = true"
-                                        ng-disabled="getNodeAttributesNames(node).length == 0">+</button>
+                                            ng-disabled="getNodeAttributesNames(node).length == 0">+</button>
 
                                     &nbsp;{{getNodeName(node)}}
                                 </td>
@@ -454,9 +420,9 @@
                             <tr ng-repeat-start="edge in networkController.selectionContainer.edges">
                                 <td class="wrappedCell">
                                     <button ng-if="edge.$$expanded" ng-click="edge.$$expanded = false"
-                                        ng-disabled="getEdgeAttributesNames(edge).length == 0">-</button>
+                                            ng-disabled="getEdgeAttributesNames(edge).length == 0">-</button>
                                     <button ng-if="!edge.$$expanded" ng-click="edge.$$expanded = true"
-                                        ng-disabled="getEdgeAttributesNames(edge).length == 0">+</button>
+                                            ng-disabled="getEdgeAttributesNames(edge).length == 0">+</button>
 
                                     &nbsp;{{getEdgeLabel(edge)}}
                                 </td>
@@ -510,7 +476,7 @@
 
                     <div class="row" style="font-size: 1.1em; margin-left: 0px; margin-right: 0px;">
                         <div class="col-xs-6">
-                            <div id="provenanceNetwork"/>
+                            <div id="provenanceNetwork"></div>
                         </div>
                         <div class="col-xs-6">
                             <span ng-show="networkController.displayProvenance.webapp_url">
@@ -617,17 +583,7 @@
                     <div>
 
                         <form novalidate ng-submit="networkController.checkQueryNetworkAndDisplay('advanced')"
-                          style="padding-left:15px">
-
-                            <!--
-                            <div class="row">
-                                <div class="col-sm-8">
-                                    <span class="row"><a ng-click="backToSimpleQuery($event); networkController.resetForm();">
-                                        <u><strong>Back to Simple Query</strong></u></a>
-                                    </span>
-                                </div>
-                            </div>
-                            -->
+                              style="padding-left:15px">
 
                             Find a subnetwork with edges that,<br>
                             (1) have one or more of these properties:<br>
@@ -685,7 +641,7 @@
                                     <li><a href class="dropdown-toggle" ng-click="networkController.advancedQueryNodeCriteria='Either'">Either source or target</a></li>
                                 </ul>
                             </span>
-                             nodes<br>
+                            nodes<br>
                             (3) with one or more of these properties.
                             <div ng-repeat="property in networkController.advancedQueryNodeProperties">
                                 <div class="row">
@@ -786,7 +742,7 @@
                <!--     <a ng-href={{getNetworkDownloadLink(networkController.currentNetwork)}}
                        class="actionsLabel btn btn-primary download-btn">  -->
                         Download
-                  <!--  </a>  -->
+                <!--  </a>  -->
             </span>
 
             <span>
@@ -871,11 +827,11 @@
             <span ng-show='networkController.isLoggedInUser && !networkController.isAdmin && !networkController.canEdit'>
 
                 <create-request-network
-                    privileges='networkController.privilegeLevel'
-                    ndex-data='networkController.currentNetwork'
-                    my-class="{{networkController.hasMultipleSubNetworks() ?
+                        privileges='networkController.privilegeLevel'
+                        ndex-data='networkController.currentNetwork'
+                        my-class="{{networkController.hasMultipleSubNetworks() ?
                             'actionsLabelDisabled-btn btn btn-primary' : 'actionsLabel btn btn-primary'}}"
-                    title="{{networkController.hasMultipleSubNetworks() ? networkController.title : 'Request Read, Edit or Admin privilege'}}">
+                        title="{{networkController.hasMultipleSubNetworks() ? networkController.title : 'Request Read, Edit or Admin privilege'}}">
                 </create-request-network>
 
             </span>
@@ -909,10 +865,7 @@
             </span>
 
             <span class="divider" ng-show='networkController.isAdmin &&
-                      !networkController.readOnlyChecked
-                    || networkController.directIsAdmin
-                    || networkController.directCanEdit
-                    || networkController.directCanRead'>
+                      !networkController.readOnlyChecked'>
             </span>
 
             <!--
