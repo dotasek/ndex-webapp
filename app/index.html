@@ -5,7 +5,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>NDEx WebApp v2.1</title>
+    <title>NDEx WebApp v2.2</title>
     <meta name="description" content="NDEx, the Network Data Exchange, is a collaborative software infrastructure for storing, sharing and publishing biological network knowledge; NDEx is developed in tight association with Cytoscape at the UC San Diego School of Medicine.">
     <meta name="viewport" content="width=device-width">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
@@ -25,6 +25,9 @@
     <link rel="stylesheet" href="styles/ndex-angular-site.css"/>
     <link rel="stylesheet" href="styles/visualize_network.css"/>
     <!-- endbuild -->
+
+    <!-- it is important to load angular *after* jQuery if you want angular to have access
+         to full jQuery functionality instead of angular's internal 'lite' version -->
 
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans" type="text/css">
 
@@ -85,7 +88,7 @@
 
     <!-- ndex scripts -->
     <script src="scripts/init.js"></script>
-   <script src="scripts/ndex-service-app.js"></script>
+    <script src="scripts/ndex-service-app.js"></script>
     <script src="scripts/ndex-service-factory.js"></script>
     <script src="scripts/services/networkService.js"></script>
     <script src="scripts/ui-service.js"></script>
@@ -509,7 +512,11 @@
 
   window.isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || safari.pushNotification);
 
-  gapi.load('client:auth2', initClient);
+    if (typeof ndexSettings === 'undefined') {
+        alert("Update your ndex-webapp-config.js file");
+    } else {
+        gapi.load('client:auth2', initClient);
+    }
 
 
 </script>

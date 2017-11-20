@@ -3,7 +3,7 @@
 var ndexApp = angular.module('ndexApp',
     ['ngRoute', 'ngResource', 'ngTouch', 'ngSanitize', 'ndexServiceApp',//'ngDialog',
      'ui.bootstrap', 'angularFileUpload', 'uiServiceApp', 'ui.grid', 'ui.grid.resizeColumns',
-     'ui.grid.selection', 'ui.grid.expandable', 'ui.grid.pinning', 'ui.grid.pagination', 'ngclipboard', 'textAngular']);
+     'ui.grid.selection', 'ui.grid.expandable', 'ui.grid.pinning', 'ui.grid.pagination', 'ngIdle', 'ngclipboard', 'textAngular']);
 //'ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.resizeColumns'
 //var net1, net2;
 var cn, csn;
@@ -275,13 +275,12 @@ var checkIfUserHasAccessToTheClickedNetwork =
 
 
 //Idle
-/*
 ndexApp.config(["IdleProvider", function(IdleProvider) {
     IdleProvider.idle( window.ndexSettings.idleTime );
-}]); */
+}]);
 
-ndexApp.run(function(){
-
+ndexApp.run(function(Idle){
+    Idle.watch();
 });
 
 //Handle enter key with ng-enter

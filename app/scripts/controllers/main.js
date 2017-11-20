@@ -1,13 +1,13 @@
 // create the controller and inject Angular's $scope
 ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProperties', '$route',
-    '$scope', '$location', '$modal', '$route', '$http', '$interval', 'uiMisc', '$rootScope',
+    '$scope', '$location', '$modal', '$route', '$http', '$interval', 'uiMisc', '$rootScope', 'ndexNavigation',
     function ( ndexService, ndexUtility, sharedProperties, $route,
-              $scope, $location, $modal, $route, $http, $interval, uiMisc, $rootScope) {
+              $scope, $location, $modal, $route, $http, $interval, uiMisc, $rootScope, ndexNavigation) {
 
-  /*      $scope.$on('IdleStart', function() {
+        $scope.$on('IdleStart', function() {
             if ( window.currentSignInType == 'basic')
                 $scope.main.signout();
-        });  */
+        });
 
         $scope.showFooter = true;
 
@@ -24,14 +24,13 @@ ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProp
             $scope.main.showSignIn = false;
             $scope.main.userName = sharedProperties.getCurrentUserAccountName();
 
-            var userFirstAndLastNames = sharedProperties.getLoggedInUserFirstAndLastNames();
-            $scope.main.userFirstAndLastNames = userFirstAndLastNames ? "Hi, " + userFirstAndLastNames : "MyAccount";
+            showUserGreeting();
 
             if ($rootScope.reloadRoute) {
                 delete $rootScope.reloadRoute;
                 $route.reload();
             };
-        }
+        };
 
         $rootScope.$on('LOGGED_IN', signInHandler);
 
@@ -43,8 +42,8 @@ ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProp
                 delete $http.defaults.headers.common['Authorization'];
             } else {
                 gapi.auth2.getAuthInstance().signOut();
-            }
-            window.currentNdexUser = null;
+            };
+	        window.currentNdexUser = null;
             window.currentSignInType = null;
             sharedProperties.currentNetworkId = null;
             sharedProperties.currentUserId = null;
@@ -52,6 +51,15 @@ ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProp
         }
 
         $scope.$on('LOGGED_OUT', signOutHandler);
+
+
+        var showUserGreeting = function() {
+            var userFirstAndLastNames = sharedProperties.getLoggedInUserFirstAndLastNames();
+            $scope.main.userFirstAndLastNames = userFirstAndLastNames ? "Hi, " + userFirstAndLastNames : "MyAccount";
+        };
+
+        $rootScope.$on('SHOW_UPDATED_USER_NAME', showUserGreeting);
+
 
         $scope.main.searchString = '';
         $scope.strLength = 0;
@@ -123,7 +131,7 @@ ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProp
             return active;
         };
         
-        // check configuration parameters loaded from ndex-webapp-config.scripts;
+        // check configuration parameters loaded from ndex-webapp-config.js;
         // if any of config parameters missing, assign default values
 
         initMissingConfigParams(window.ndexSettings);
@@ -453,7 +461,7 @@ ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProp
          ----------------------------------------------*/
         /*
          * As argument, this function takes one of configurable navigation bar
-         * menu objects specified in ndex-webapp-config.scripts (i.e., logoLink, aboutLink,
+         * menu objects specified in ndex-webapp-config.js (i.e., logoLink, aboutLink,
          * documentationLink, etc), and checks whether this navigation link
          * was configured to follow the link "silently" or warn user about navigating
          * to an external domain.
@@ -500,10 +508,12 @@ ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProp
          ----------------------------------------------*/
 
         $scope.showNDExCitationInClipboardMessage = function() {
+            var closeModalInterval = 2000; // ms
 
-            var message =
-                "The NDEx citation information was copied to the clipboard. ";
-            alert(message);
+            var title   = "NDEx Citation Copied";
+            var message  = "The NDEx citation information was copied to the clipboard. ";
+
+            ndexNavigation.genericInfoModalAutoClose(title, message, closeModalInterval);
         };
 
          $scope.showSearchBar = function() {
@@ -618,7 +628,7 @@ ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProp
 
         function initMissingConfigParams(config) {
 
-            // check configuration parameters loaded from ndex-webapp-config.scripts;
+            // check configuration parameters loaded from ndex-webapp-config.js;
             // if any of config parameters missing, assign default values
             if (typeof config.requireAuthentication === 'undefined') {
                 config.requireAuthentication = false;
@@ -677,7 +687,7 @@ ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProp
             if (typeof config.ndexServerUri === 'undefined') {
                 // ndexServerUri is a required parameter -- give an error message;
                 // replace the messages.serverDown message
-                config.messages.serverDown = "Error in ndex-webapp-config.scripts:<br>" +
+                config.messages.serverDown = "Error in ndex-webapp-config.js:<br>" +
                     "The parameter ndexServerUri is required.<br>" +
                     "Please edit the configuration file to provide this URI."   ;
             }
@@ -747,9 +757,11 @@ ndexApp.controller('mainController', [ 'ndexService', 'ndexUtility', 'sharedProp
                 config.documentationLink.showWarning = false;
             }
             if ((typeof config.refreshIntervalInSeconds === 'undefined') ||
-                (typeof config.refreshIntervalInSeconds != 'number')) {
-                // refresh interval defaults to 30 seconds in case it is not explicitly defined or defined as non-number
-                config.refreshIntervalInSeconds = 30;
+                (typeof config.refreshIntervalInSeconds != 'number') ||
+                config.refreshIntervalInSeconds < 0) {
+                // refresh interval defaults to 0 seconds (disabled) in case it is not explicitly defined,
+                // defined as non-number or negative number
+                config.refreshIntervalInSeconds = 0;
             };
 
 

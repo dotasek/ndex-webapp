@@ -281,7 +281,7 @@ angular.module('ndexServiceApp')
             return elements;
 
             // #10 Need to Override ID if exists
-            //​ *ID*​ has a special meaning in Cytoscape.scripts and if such attribute is available in CX, it should be replaced to something else.
+            //​ *ID*​ has a special meaning in Cytoscape.js and if such attribute is available in CX, it should be replaced to something else.
             // This should be handled carefully because it breaks graph topology if not correctly converted.
 
             /*
@@ -301,7 +301,7 @@ angular.module('ndexServiceApp')
              ```var label = node.label;
              ```
 
-             If CX contains attribute names containing such characters, it breaks Cytoscape.scripts.  The converter find and replace all of them before converting the actual data.
+             If CX contains attribute names containing such characters, it breaks Cytoscape.js.  The converter find and replace all of them before converting the actual data.
              */
 
 
@@ -928,7 +928,7 @@ angular.module('ndexServiceApp')
          */
 
         /*        #12 Selected Node/Edge default value handler
-         In Cytoscape, there are selected node/edge color visual property, but there is no such thing in Cytoscape.scripts.
+         In Cytoscape, there are selected node/edge color visual property, but there is no such thing in Cytoscape.js.
          We need to convert default value of selected colors into special CSS Selector, like:
 
          ```"selector": "node:selected",

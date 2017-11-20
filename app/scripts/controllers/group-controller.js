@@ -231,19 +231,20 @@ ndexApp.controller('groupController',
     var populateNetworkTable = function()
     {
         var columnDefs = [
-            { field: '  ', enableFiltering: false, maxWidth: 42, cellTemplate: 'views/gridTemplates/networkStatus.html', visible: true },
-            { field: 'Network Name', enableFiltering: true, cellTemplate: 'views/gridTemplates/networkName.html'},
-            { field: ' ', enableFiltering: false, width:40, cellTemplate: 'views/gridTemplates/downloadNetwork.html' },
+            { field: '  ', enableFiltering: false, maxWidth: 42, cellTemplate: 'pages/gridTemplates/networkStatus.html', visible: true },
+            { field: 'Network Name', enableFiltering: true, cellTemplate: 'pages/gridTemplates/networkName.html'},
+            { field: ' ', enableFiltering: false, width:40, cellTemplate: 'pages/gridTemplates/downloadNetwork.html' },
             //{ field: 'Format', enableFiltering: true, maxWidth:63 },
-            { field: 'Ref.', enableFiltering: false, maxWidth: 45, cellTemplate: 'views/gridTemplates/reference.html' },
-            { field: 'Disease', enableFiltering: true, width: 68, cellTemplate: 'views/gridTemplates/disease.html'},
-            { field: 'Tissue',  enableFiltering: true, maxWidth: 65, cellTemplate: 'views/gridTemplates/tissue.html'},
+            { field: 'Ref.', enableFiltering: false, maxWidth: 45, cellTemplate: 'pages/gridTemplates/reference.html' },
+            { field: 'Disease', enableFiltering: true, width: 68, cellTemplate: 'pages/gridTemplates/disease.html'},
+            { field: 'Tissue',  enableFiltering: true, maxWidth: 65, cellTemplate: 'pages/gridTemplates/tissue.html'},
             { field: 'Nodes', enableFiltering: false, maxWidth: 70 },
             { field: 'Edges', enableFiltering: false, maxWidth: 70 },
-            { field: 'Visibility', enableFiltering: true, maxWidth: 70 },
+            { field: 'Visibility', enableFiltering: true, width: 90, cellTemplate: 'pages/gridTemplates/visibility.html'},
             { field: 'Owner', enableFiltering: true, width:80,
-                cellTemplate: 'views/gridTemplates/ownedBy.html'},
-            { field: 'Last Modified', enableFiltering: false, maxWidth:120, cellFilter: "date:'short'" }
+                cellTemplate: 'pages/gridTemplates/ownedBy.html'},
+            { field: 'Last Modified', enableFiltering: false, maxWidth:120, cellFilter: "date:'short'" },
+            { field: 'indexed', enableFiltering: false,  visible: false}
         ];
         $scope.networkGridApi.grid.options.columnDefs = columnDefs;
         refreshNetworkTable();
@@ -275,7 +276,7 @@ ndexApp.controller('groupController',
             return "";
         }
 
-        // convert HTML to markdown; toMarkdown is defined in to-markdown.min.scripts
+        // convert HTML to markdown; toMarkdown is defined in to-markdown.min.js
         var markDown = toMarkdown(html);
 
         // after using toMarkdown() at previous statement, markDown var can still contain
@@ -324,6 +325,7 @@ ndexApp.controller('groupController',
             var nodes = network['nodeCount'];
             var edges = network['edgeCount'];
             var owner = network['owner'];
+            var indexed = network['indexed'];
             var visibility = network['visibility'];
             var modified = new Date( network['modificationTime'] );
 
@@ -353,7 +355,8 @@ ndexApp.controller('groupController',
                 "ownerUUID"     :   network['ownerUUID'],
                 "name"          :   networkName,
                 "errorMessage"  :   errorMessage,
-                "subnetworks"   :   noOfSubNetworks
+                "subnetworks"   :   noOfSubNetworks,
+                "indexed"       :   indexed
             };
             $scope.networkGridOptions.data.push(row);
         }

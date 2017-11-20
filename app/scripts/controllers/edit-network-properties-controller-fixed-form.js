@@ -1,6 +1,6 @@
 ndexApp.controller('editNetworkPropertiesFixedFormController',
-	['$scope', '$location', '$routeParams', '$route', 'ndexService', '$modal', 'sharedProperties', '$timeout', 'uiMisc', 'ndexNavigation',
-		function($scope, $location, $routeParams, $route, ndexService, $modal, sharedProperties, $timeout, uiMisc, ndexNavigation){
+	['$scope', '$location', '$routeParams', '$route', 'ndexService', '$modal', 'sharedProperties', '$timeout', 'uiMisc', 'ndexNavigation', 'ndexUtility',
+		function($scope, $location, $routeParams, $route, ndexService, $modal, sharedProperties, $timeout, uiMisc, ndexNavigation, ndexUtility, datepicker){
 	 //testing
 
 	//              Process the URL to get application state
@@ -21,6 +21,23 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
     editor.canRead = false;
     editor.showcased = {"state": true};
     editor.subNetworkId = subNetworkId;
+    editor.visibilityIndex = "PRIVATE_NOT_INDEXED";
+    editor.idexed = false;
+    $scope.$watch('editor.visibilityIndex', function() {
+        if(editor.visibilityIndex === "PUBLIC"){
+            $scope.mainProperty.visibility = "PUBLIC";
+            $scope.mainProperty.indexed = true;
+        } else if(editor.visibilityIndex === "PUBLIC_NOT_INDEXED"){
+            $scope.mainProperty.visibility = "PUBLIC";
+            $scope.mainProperty.indexed = false;
+        } else if(editor.visibilityIndex === "PRIVATE"){
+            $scope.mainProperty.visibility = "PRIVATE";
+            $scope.mainProperty.indexed = true;
+        } else if(editor.visibilityIndex === "PRIVATE_NOT_INDEXED"){
+            $scope.mainProperty.visibility = "PRIVATE";
+            $scope.mainProperty.indexed = false;
+        }
+    });
 
     editor.reference = null;
 
@@ -28,8 +45,11 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
 
     editor.namespaces = [];
 
+    editor.viewfilter = {"state": "MAIN"};
+
     editor.showNameSpaces = false;
     editor.propertyValuePairs = [];
+    editor.propertyValuePairsIndex = {};
     editor.hiddenValuePairs = [];
     editor.propertyTemplate = {
         'author': {predicateString: "author", value: "", isReadOnlyLabel: false, dataType: "string", subNetworkId: subNetworkId},
@@ -42,6 +62,29 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
         'rightsHolder': {predicateString: "rightsHolder", value: "", isReadOnlyLabel: false, dataType: "string", subNetworkId: subNetworkId},
         'tissue': {predicateString: "tissue", value: "", isReadOnlyLabel: false, dataType: "string", subNetworkId: subNetworkId}
     };
+
+    editor.rights = [
+        "",
+        "Attribution 4.0 International (CC BY 4.0)",
+        "Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)",
+        "Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
+        "Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)",
+        "Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)",
+        "Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)",
+        "Waiver-No rights reserved (CC0)",
+        "Apache License 2.0 (Apache-2.0)",
+        "3-clause BSD license (BSD-3-Clause)",
+        "2-clause BSD license (BSD-2-Clause)",
+        "GNU General Public License (GPL)",
+        "GNU Lesser General Public License (LGPL)",
+        "MIT license (MIT)",
+        "Mozilla Public License 2.0 (MPL-2.0)",
+        "Common Development and Distribution License (CDDL-1.0)",
+        "Eclipse Public License (EPL-1.0)",
+        "Other"
+    ];
+
+    editor.rightsOther = "";
 
     editor.scoringLookup = {
         'author': 10,
@@ -67,9 +110,60 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
         "description": "",
         "reference": "",
         "version": "",
-        "visibility": "PRIVATE"
+        "visibility": "PRIVATE",
+        "indexed": true
     };
 
+    editor.doiRequired = {
+        'name': $scope.mainProperty.name,
+        'description': $scope.mainProperty.decription,
+        'author': editor.propertyTemplate.author,
+        'rights': editor.propertyTemplate.rights,
+        'rightsHolder': editor.propertyTemplate.rightsHolder,
+        'reference': $scope.mainProperty.reference
+    };
+
+    var loggedInUser = ndexUtility.getUserCredentials();
+    var loggedInUserName = (loggedInUser && loggedInUser['userName']) ? loggedInUser['userName'] : null;
+
+    editor.doiInfo = {
+        "user": {"username": loggedInUserName},
+        "visibility": "PUBLIC",
+        "pubDate": ""
+    }
+
+
+    $scope.updatecalendar = function(){
+        editor.doiInfo.pubDate = $('#doiDTPicker').val();
+    };
+
+    // grab today and inject into field
+    $scope.today = function() {
+        $scope.dt = new Date();
+    };
+
+    // run today() function
+    $scope.today();
+
+    // setup clear
+    $scope.clear = function () {
+        $scope.dt = null;
+    };
+
+    // handle formats
+    $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+
+    // assign custom format
+    $scope.format = $scope.formats[0];
+
+
+    // open min-cal
+    $scope.open = function($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+
+        $scope.opened = true;
+    };
     uiMisc.hideSearchMenuItem();
     $scope.$parent.showSearchMenu = true;
 
@@ -412,6 +506,44 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
         return item.predicateString == 'custom...';
     };
 
+    $scope.updateFieldFilters = function(filterType){
+        editor.viewfilter.state = filterType;
+    }
+
+    editor.saveAndSubmitDOI = function(){
+        if(editor.errors.length < 1){
+            if(editor.checkDOIRequirements()){
+                editor.save();
+
+
+                var saveTheseProperties = {
+                    "name": $scope.mainProperty.name,
+                    "description": $scope.mainProperty.description,
+                    "version": $scope.mainProperty.version,
+                    "author": editor.getPropertyValue('author'),
+                    "rights": editor.getPropertyValue('rights'),
+                    "rightsHolder": editor.getPropertyValue('rightsHolder'),
+                    "reference": $scope.mainProperty.reference,
+                    "contactEmail": editor.doiInfo.user.email,
+                    "pubDate": $('#doiDTPicker').val()
+                };
+
+                console.log(saveTheseProperties);
+
+                ndexService.requestDoi(editor.networkExternalId, saveTheseProperties,
+                    function() {
+                        console.log("request created successfully!");
+                    },
+                    function(error){
+                        editor.errors.push(error)
+                    });
+
+
+            } else {
+                editor.errors.push("Missing value")
+            }
+        }
+    };
 
     editor.save = function() {
         if(editor.checkPublicRequirements()){
@@ -451,6 +583,9 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
                 if(pair.predicateString === 'custom...')
                     pair.predicateString = pair.predicateStringCustom;
 
+                if(pair.predicateString === 'rights' && pair.value == "Other")
+                    pair.value = pair.rightsOther + " (" + pair.rightsOtherURL + ")";
+
                 delete pair.isReadOnlyLabel;
                 delete pair.labelValue;
                 delete pair.labelValue;
@@ -482,7 +617,8 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
                 'name': $scope.mainProperty.name,
                 'description': $scope.mainProperty.description,
                 'version': $scope.mainProperty.version,
-                'visibility': $scope.mainProperty.visibility
+                'visibility': $scope.mainProperty.visibility,
+                'index': $scope.mainProperty.indexed
             }
 
             ndexService.setNetworkSummaryV2(networkExternalId, networkSummaryProperties,
@@ -502,6 +638,7 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
                                 console.log("unable to change showcase for Network with Id " + networkId);
                             });
                     }
+
                 },
                 function(error) {
 
@@ -513,6 +650,14 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
                     }
 
                     $scope.isProcessing = false;
+                });
+
+            ndexService.setNetworkSystemPropertiesV2(networkId, "index", $scope.mainProperty.indexed,
+                function (data, networkId, property, value) {
+                    console.log("index set to " + $scope.mainProperty.indexed);
+                },
+                function (error, networkId, property, value) {
+                    console.log("unable to change indexed for Network with Id " + networkId);
                 });
 
 
@@ -549,9 +694,12 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
 
 	editor.checkPublicRequirements = function(){
         if($scope.mainProperty.visibility != "PRIVATE"){
-            if (!$scope.mainProperty.name || !$scope.mainProperty.description || !$scope.mainProperty.version || $scope.mainProperty.name.length < 1 || $scope.mainProperty.description.length < 1 ||
+            if (!$scope.mainProperty.name ||
+                !$scope.mainProperty.description ||
+                !$scope.mainProperty.version ||
+                $scope.mainProperty.name.length < 1 ||
+                $scope.mainProperty.description.length < 1 ||
                 $scope.mainProperty.version.length < 1){
-            //if($scope.mainProperty.name.length < 1 || $scope.mainProperty.description.length < 1 || $scope.mainProperty.version.length < 1){
                 return false;
             }
         }
@@ -559,7 +707,27 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
         return true;
     };
 
-	editor.removeNamespace = function(index) {
+    editor.checkDOIRequirements = function(){
+        if (!$scope.mainProperty.name ||
+            !$scope.mainProperty.description ||
+            !$scope.mainProperty.version ||
+            !editor.getPropertyValue('rights') ||
+            !editor.getPropertyValue('rightsHolder') ||
+            !editor.getPropertyValue('author') ||
+            $scope.mainProperty.name.length < 1 ||
+            $scope.mainProperty.description.length < 1 ||
+            $scope.mainProperty.version.length < 1 ||
+            editor.getPropertyValue('rights').length < 1 ||
+            editor.getPropertyValue('rightsHolder').length < 1 ||
+            editor.getPropertyValue('author').length < 1)
+        {
+            return false;
+        } else {
+            return true;
+        }
+    };
+
+        editor.removeNamespace = function(index) {
 		editor.ontologies.splice(index,1);
 		//TODO api call
 	};
@@ -586,6 +754,11 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
 	};
 
     editor.refresh = $route.reload;
+
+    editor.cancel = function() {
+        $location.path("/network/" + editor.networkExternalId);
+    }
+
 
     editor.preloadedOntologies = [
         {
@@ -679,6 +852,7 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
                 editor.propertyValuePairs = [];
                 editor.hiddenValuePairs = [];
                 $scope.mainProperty.name = network.name;
+                $scope.mainProperty.indexed = network.indexed;
                 if(!$scope.mainProperty.name){
                     $scope.mainProperty.name = "";
                 }
@@ -705,8 +879,18 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
                 }
                 $scope.mainProperty.visibility = network.visibility;
                 if($scope.mainProperty.visibility === "PRIVATE"){
+                    if($scope.mainProperty.indexed){
+                        editor.visibilityIndex = "PRIVATE";
+                    } else {
+                        editor.visibilityIndex = "PRIVATE_NOT_INDEXED";
+                    }
                     editor.showcased.state = true;
                 } else {
+                    if($scope.mainProperty.indexed){
+                        editor.visibilityIndex = "PUBLIC";
+                    } else {
+                        editor.visibilityIndex = "PUBLIC_NOT_INDEXED";
+                    }
                     editor.showcased.state = network.isShowcase;
                 }
 
@@ -714,6 +898,7 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
                 // "reserved property names" that every network has (these names are listed in $scope.reservedNames).
                 // The hidden properties are not available for modification.  Another set (editor.propertyValuePairs)
                 // are properties presented to user for editing.
+                var propIndex = 0;
                 for(var i=0; i< network.properties.length; i++){
                     if ( network.properties[i].predicateString
                           && ($scope.reservedNames.indexOf(network.properties[i].predicateString.toLowerCase()) === -1)
@@ -721,10 +906,13 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
                     {
                         network.properties[i].labelValue = network.properties[i].predicateString;
                         editor.propertyValuePairs.push(network.properties[i]);
+                        editor.propertyValuePairsIndex[network.properties[i].predicateString] = propIndex;
+                        propIndex++;
                     } else {
                         editor.hiddenValuePairs.push(network.properties[i]);
                     }
                 }
+
 
                 if (editor.propertyValuePairs.length > 1) {
                     editor.propertyValuePairs = _.sortBy(editor.propertyValuePairs, 'predicateString');
@@ -743,6 +931,15 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
                         $scope.namesForSolrIndexing.splice(dropdownIndex, 1);
                     }
                     i = i + 1;
+
+                    //==============================================================
+                    // CHECK IF RIGHTS PROPERTY IS IN THE DROPDOWN.  IF NOT ADD IT
+                    //==============================================================
+                    if(editor.propertyValuePairs[i] && editor.propertyValuePairs[i].predicateString == "rights"){
+                        if(editor.rights.indexOf(editor.propertyValuePairs[i].value) < 0){
+                            editor.rights.push(editor.propertyValuePairs[i].value);
+                        }
+                    }
                 }
 
 
@@ -766,6 +963,8 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
 
                         if(!foundKey){
                             editor.propertyValuePairs.push(editor.propertyTemplate[label]);
+                            editor.propertyValuePairsIndex[label] = propIndex;
+                            propIndex++;
                         }
 
                     }
@@ -780,12 +979,34 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
                 editor.isOwner = (networkOwnerUUID == loggedInUserUUID);
                 var me = "";
 
+                if($routeParams.doi){
+                    editor.viewfilter.state = "DOI"
+                } else {
+                    editor.viewfilter.state = "MAIN"
+                }
+
             }
         )
         .error(
             function(error) {
                 editor.errors.push(error)
             }
+        )
+        .then(
+            ndexService.getUserByUserNameV2(editor.doiInfo.user.username,
+                function(data) {
+                    var userId = (data && data.externalId) ? data.externalId : null;
+                    if (userId) {
+                        editor.doiInfo.user.email = data.emailAddress;
+                    }
+                    else {
+                        forgot.errorMsg = "Unable to get User Id for user " + $scope.forgot.accountName +
+                            " and request password reset."
+                    }
+                },
+                function(error){
+                    editor.errors.push(error)
+                })
         );
 
     var userId = sharedProperties.getCurrentUserId();
@@ -828,5 +1049,23 @@ ndexApp.controller('editNetworkPropertiesFixedFormController',
 */
 
     editor.showNameSpaces = (editor.namespaces.length > 0) ? true : false;
+
+    $scope.setToolTips = function(){
+        var myToolTips = $('[data-toggle="tooltip"]');
+
+        myToolTips.tooltip();
+    };
+
+    editor.getPropertyValue = function(propName){
+        //editor.propertyValuePairs[editor.propertyValuePairsIndex['rights']].value
+
+        for(var i=0; i<editor.propertyValuePairs.length; i++){
+            if(editor.propertyValuePairs[i].predicateString === propName){
+                return editor.propertyValuePairs[i].value;
+            }
+        }
+
+        return null;
+    }
 
 }]);

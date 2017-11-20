@@ -557,6 +557,16 @@ ndexServiceApp.factory('ndexService',
                 this.sendHTTPRequest(config, successHandler, errorHandler);
             };
 
+            factory.updateTaskPropertiesNoHandlersV2 = function (taskId, properties) {
+                // Server API: Update Task Properties
+                // PUT /task/{taskid}/ownerProperties
+
+                var url = "/task/" + taskId + "/ownerProperties";
+                var config = ndexConfigs.getPutConfigV2(url, properties);
+
+                return $http(config);
+            };
+
             factory.updateRequestPropertiesV2 = function (requestId, properties, successHandler, errorHandler) {
                 // Server API: Update Request Properties
                 // PUT /request/{requestid}/properties
@@ -565,6 +575,16 @@ ndexServiceApp.factory('ndexService',
                 var config = ndexConfigs.getPutConfigV2(url, properties);
 
                 this.sendHTTPRequest(config, successHandler, errorHandler);
+            };
+
+            factory.updateRequestPropertiesNoHandlersV2 = function (requestId, properties) {
+                // Server API: Update Request Properties
+                // PUT /request/{requestid}/properties
+
+                var url = "/request/" + requestId + "/properties";
+                var config = ndexConfigs.getPutConfigV2(url, properties);
+
+                return $http(config);
             };
 
             /*---------------------------------------------------------------------*
@@ -627,6 +647,8 @@ ndexServiceApp.factory('ndexService',
 
                 if (!message) {
                     message = "";
+                } else {
+                    message = encodeURIComponent(message);
                 };
 
                 var url =
@@ -637,12 +659,32 @@ ndexServiceApp.factory('ndexService',
                 this.sendHTTPRequest(config, successHandler, errorHandler);
             };
 
+            factory.acceptOrDenyPermissionRequestNoHandlersV2 = function (recipientId, requestId, action, message) {
+                // Server API: Accept or Deny a permission request
+                // PUT /user/{recipient_id}/permissionrequest/{requestid}?action={accept|deny}&message={message}
+
+                if (!message) {
+                    message = "";
+                } else {
+                    message = encodeURIComponent(message);
+                };
+
+                var url =
+                    "/user/" + recipientId + "/permissionrequest/" + requestId +
+                    "?action=" + action + "&message=" + message;
+
+                var config = ndexConfigs.getPutConfigV2(url, null);
+                return $http(config);
+            };
+
             factory.acceptOrDenyMembershipRequestV2 = function (recipientId, requestId, action, message, successHandler, errorHandler) {
                 // Server API: Accept or Deny a membership request
                 // PUT /user/{recipient_id}/membershiprequest/{requestid}?action={accept|deny}&message={message}
 
                 if (!message) {
                     message = "";
+                } else {
+                    message = encodeURIComponent(message);
                 };
 
                 var url =
@@ -651,6 +693,25 @@ ndexServiceApp.factory('ndexService',
 
                 var config = ndexConfigs.getPutConfigV2(url, null);
                 this.sendHTTPRequest(config, successHandler, errorHandler);
+            };
+
+            factory.acceptOrDenyMembershipRequestNoHandlersV2 = function (recipientId, requestId, action, message) {
+                // Server API: Accept or Deny a membership request
+                // PUT /user/{recipient_id}/membershiprequest/{requestid}?action={accept|deny}&message={message}
+
+                if (!message) {
+                    message = "";
+                } else {
+                    message = encodeURIComponent(message);
+                };
+
+
+                var url =
+                    "/user/" + recipientId + "/membershiprequest/" + requestId +
+                    "?action=" + action + "&message=" + message;
+
+                var config = ndexConfigs.getPutConfigV2(url, null);
+                return $http(config);
             };
 
             /*
@@ -823,6 +884,16 @@ ndexServiceApp.factory('ndexService',
                 this.sendHTTPRequest(config, successHandler, errorHandler);
             };
 
+            factory.deleteNetworkNoHandlersV2 = function(networkId) {
+                // Server API: Delete a Network
+                // DELETE /network/{networkId}
+
+                var url = "/network/" + networkId;
+                var config = ndexConfigs.getDeleteConfigV2(url, null);
+
+                return $http(config);
+            };
+
             factory.getNetworkSummaryV2 = function (networkId, accesskey) {
                 // Server API: Get Network Summary
                 // GET /network/{networkid}/summary?accesskey={accessKey}
@@ -894,6 +965,16 @@ ndexServiceApp.factory('ndexService',
                     });
             };
 
+            factory.setNetworkSystemPropertiesNoHandlersV2 = function(networkId, mapOfProperties) {
+                // Server API: Set Network System Properties
+                // PUT /network/{networkId}/systemproperty
+
+                var url = "/network/" + networkId + "/systemproperty";
+                var config = ndexConfigs.getPutConfigV2(url, mapOfProperties);
+
+                return $http(config);
+            };
+
             factory.getAllPermissionsOnNetworkV2 = function(networkId, type, permission, startPage, size, successHandler, errorHandler) {
                 // calls NetworkServiceV2.getNetworkUserMemberships server API at
                 // /network/{networkID}/permission?type={user|group}&start={startPage}&size={size}
@@ -936,6 +1017,41 @@ ndexServiceApp.factory('ndexService',
                 this.sendHTTPRequest(config, successHandler, errorHandler);
             };
 
+
+            factory.updateNetworkPermissionNoHandlersV2 = function (networkId, type, resourceId, permission) {
+                // Server API: Update Network Permission
+                // PUT /network/{networkid}/permission?(userid={uuid}|groupid={uuid})&permission={permission}
+
+                var url = "/network/" + networkId + "/permission?";
+                if (type == 'user') {
+                    url = url + 'userid=';
+                } else if (type == 'group') {
+                    url = url + 'groupid=';
+                }
+                url = url + resourceId + '&permission=' + permission;
+
+                var config = ndexConfigs.getPutConfigV2(url, null);
+
+                return $http(config);
+            };
+
+            factory.updateNetworkPermissionNoHandlersV2 = function (networkId, type, resourceId, permission) {
+                // Server API: Update Network Permission
+                // PUT /network/{networkid}/permission?(userid={uuid}|groupid={uuid})&permission={permission}
+
+                var url = "/network/" + networkId + "/permission?";
+                if (type == 'user') {
+                    url = url + 'userid=';
+                } else if (type == 'group') {
+                    url = url + 'groupid=';
+                }
+                url = url + resourceId + '&permission=' + permission;
+
+                var config = ndexConfigs.getPutConfigV2(url, null);
+
+                return $http(config);
+            };
+
             factory.deleteNetworkPermissionV2 = function (networkId, type, resourceId, successHandler, errorHandler) {
                 // Server API: Delete Network Permission
                 // DELETE /network/{networkid}/permission?(userid={uuid}|groupid={uuid})
@@ -962,6 +1078,16 @@ ndexServiceApp.factory('ndexService',
                 this.sendHTTPRequest(config, successHandler, errorHandler);
             };
 
+            factory.setNetworkPropertiesNoHandlersV2 = function(networkId, properties, successHandler, errorHandler) {
+                // Server API: Set Network Properties
+                // PUT /network/{networkId}/properties
+
+                var url = "/network/" + networkId + "/properties";
+                var config = ndexConfigs.getPutConfigV2(url, properties);
+
+                return $http(config);
+            };
+
             factory.setNetworkSummaryV2 = function(networkId, summaryProperties, successHandler, errorHandler) {
                 // Server API: Set Network Properties
                 // PUT /network/{networkId}/properties
@@ -981,7 +1107,17 @@ ndexServiceApp.factory('ndexService',
 
                 this.sendHTTPRequest(config, successHandler, errorHandler);
             };
-            
+
+            factory.updateNetworkProfileNoHandlersV2 = function (networkId, profile) {
+                // Server API: Update Network Profile
+                // PUT /network/{networkId}/profile
+
+                var url = "/network/" + networkId + "/profile";
+                var config = ndexConfigs.getPutConfigV2(url, profile);
+
+                return $http(config);
+            };
+
             factory.getNetworkProvenanceV2 = function (networkId, successHandler, errorHandler) {
                 // Server API: Get Network Provenance
                 // GET /network/{networkId}/provenance
@@ -1325,6 +1461,19 @@ ndexServiceApp.factory('ndexService',
                 this.sendHTTPRequest(config, successHandler, errorHandler);
             };
 
+            factory.requestDoi = function (networkId, properties, successHandler, errorHandler) {
+                requestData = {
+                    "type": "DOI",
+                    "networkId": networkId,
+                    "properties": properties
+                }
+
+                var url = "/admin/request";
+                var config = ndexConfigs.getPostConfigV2(url, requestData);
+
+                this.sendHTTPRequest(config, successHandler, errorHandler);
+            };
+
             // return factory object
             return factory;
         }]);
@@ -1375,7 +1524,19 @@ ndexServiceApp.factory('ndexUtility', function () {
                     token: loggedInUser.token
                 };
                 return userData;
-            };
+            } else {
+                loggedInUser = window.currentNdexUser;
+                if(loggedInUser){
+                    var userData = {
+                        userName: loggedInUser.userName,
+                        externalId: loggedInUser.externalId,
+                        token: ""
+                    };
+                    return userData;
+                } else {
+                    return null;
+                }
+            }
         };
         return null;
     };

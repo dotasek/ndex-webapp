@@ -19,7 +19,8 @@ ndexApp.controller('manageBulkNetworkAccessController',
     bulkNetworkManager.newGroups = {};
     $scope.noNetworksSelected = false;
 
-    bulkNetworkManager.selectedIDs = sharedProperties.getSelectedNetworkIDs();
+    bulkNetworkManager.selectedIDsAndNetworks = sharedProperties.getSelectedNetworkIDs();
+    bulkNetworkManager.selectedIDs = Object.keys(sharedProperties.getSelectedNetworkIDs());
     bulkNetworkManager.currentUserId = sharedProperties.getCurrentUserId();
 
     bulkNetworkManager.selectedNetworksForUpdatingAccessPermissions = {};
@@ -55,7 +56,7 @@ ndexApp.controller('manageBulkNetworkAccessController',
                             accountType: "user"
                         };
                         userMembershipsForNetwork.push(membership);
-                    }
+                    };
 
                     bulkNetworkManager.selectedNetworksForUpdatingAccessPermissions[networkUUID] =
                         userMembershipsForNetwork;

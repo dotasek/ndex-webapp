@@ -1,6 +1,8 @@
 ndexApp.controller('searchController',
-    [ 'ndexService', 'sharedProperties', '$scope', '$rootScope', '$location', '$modal', 'ndexNavigation', 'uiMisc', 'ndexUtility',
-        function (ndexService, sharedProperties, $scope, $rootScope, $location, $modal, ndexNavigation, uiMisc, ndexUtility) {
+    [ 'ndexService', 'sharedProperties', '$scope', '$rootScope', 'ndexSpinner',
+        '$location', '$modal', 'ndexNavigation', 'uiMisc', 'ndexUtility',
+        function (ndexService, sharedProperties, $scope, $rootScope, ndexSpinner,
+                  $location, $modal, ndexNavigation, uiMisc, ndexUtility) {
 
 
             //              Controller Declarations/Initializations
@@ -56,6 +58,9 @@ ndexApp.controller('searchController',
 
             searchController.loggedInUserId = sharedProperties.getCurrentUserId();
 
+            searchController.showNetworkTable = false;
+            var spinnerSearchPageId = "spinnerSearchPageId";
+
 
             $(document).ready(function() {
                 if (!searchController.loggedInUserId) {
@@ -63,6 +68,12 @@ ndexApp.controller('searchController',
                 };
             });
 
+
+            // this function gets called when user navigates away from the current page.
+            // (can also use "$locationChangeStart" instead of "$destroy"
+            $scope.$on("$destroy", function(){
+               ndexSpinner.stopSpinner();
+            });
 
             $scope.showNetworkInfo = function(rowEntity) {
 
@@ -98,7 +109,7 @@ ndexApp.controller('searchController',
                 return $("<html>"+html+"</html>").text();
 
                 /*
-                // convert HTML to markdown; toMarkdown is defined in to-markdown.min.scripts
+                // convert HTML to markdown; toMarkdown is defined in to-markdown.min.js
                 var markDown = toMarkdown(html);
 
                 // after using toMarkdown() at previous statement, markDown var can still contain
@@ -181,6 +192,13 @@ ndexApp.controller('searchController',
                         searchController.networkTableRowsSelected = selectedRows.length;
                     });
 
+                    gridApi.core.on.rowsRendered($scope, function() {
+                        // we need to call core.handleWindowResize() to fix the table layout in case it is distorted
+                        setTimeout(function () {
+                            $scope.networkGridApi.core.handleWindowResize();
+                            //ndexSpinner.stopSpinner();
+                        }, 250);
+                    });
                 }
             };
             
@@ -194,15 +212,18 @@ ndexApp.controller('searchController',
                 { field: 'Tissue',  enableFiltering: true, maxWidth: 65, cellTemplate: 'views/gridTemplates/tissue.html'},
                 { field: 'Nodes', enableFiltering: false, maxWidth:70 },
                 { field: 'Edges', enableFiltering: false, maxWidth:70 },
-                { field: 'Visibility', enableFiltering: true, maxWidth:70 },
+                { field: 'Visibility', enableFiltering: true, width: 90, cellTemplate: 'pages/gridTemplates/visibility.html'},
                 { field: 'Owner', enableFiltering: true, width:80,
                     cellTemplate: 'views/gridTemplates/ownedBy.html'},
                 { field: 'Last Modified', enableFiltering: false, maxWidth:120, cellFilter: "date:'short'" },
 
-                { field: 'description', enableFiltering: false,  visible: false},
-                { field: 'externalId',  enableFiltering: false,  visible: false},
-                { field: 'ownerUUID',   enableFiltering: false,  visible: false},
-                { field: 'name',        enableFiltering: false,  visible: false}
+                { field: 'description',  enableFiltering: false,  visible: false},
+                { field: 'externalId',   enableFiltering: false,  visible: false},
+                { field: 'ownerUUID',    enableFiltering: false,  visible: false},
+                { field: 'name',         enableFiltering: false,  visible: false},
+                { field: 'errorMessage', enableFiltering: false,  visible: false},
+                { field: 'subnetworks',  enableFiltering: false,  visible: false},
+                { field: 'indexed',      enableFiltering: false,  visible: false}
             ];
 
             var populateNetworkTable = function()
@@ -246,6 +267,7 @@ ndexApp.controller('searchController',
                     var nodes = network['nodeCount'];
                     var edges = network['edgeCount'];
                     var owner = network['owner'];
+                    var indexed = network['indexed'];
                     var visibility = network['visibility'];
                     var modified = new Date( network['modificationTime'] );
 
@@ -275,11 +297,14 @@ ndexApp.controller('searchController',
                         "ownerUUID"     :   network['ownerUUID'],
                         "name"          :   networkName,
                         "errorMessage"  :   errorMessage,
-                        "subnetworks"   :   noOfSubNetworks
+                        "subnetworks"   :   noOfSubNetworks,
+                        "indexed"       :   indexed
                     };
 
                     $scope.networkSearchGridOptions.data.push(row);
-                }
+                };
+
+                searchController.showNetworkTable = (_.size($scope.networkSearchGridOptions.data) > 0);
             };
 
             searchController.setAndDisplayCurrentNetwork = function (networkId) {
@@ -325,10 +350,13 @@ ndexApp.controller('searchController',
                             searchController.networkSearchNoResults = true;
                             searchController.networkSearchInProgress = false;
                         };
+                        ndexSpinner.stopSpinner();
                     },
                     function (error)
                     {
+                        ndexSpinner.stopSpinner();
                         if (error) {
+
                             searchController.networkSearchResults = [];
                             searchController.errors.push(error.message);
                             searchController.networkSearchInProgress = false;
@@ -373,9 +401,11 @@ ndexApp.controller('searchController',
                             searchController.networkSearchNoResults = true;
                             searchController.networkSearchInProgress = false;
                         };
+                        ndexSpinner.stopSpinner();
                     },
                     function (error)
                     {
+                        ndexSpinner.stopSpinner();
                         if (error) {
                             searchController.networkSearchResults = [];
                             searchController.errors.push(error.message);
@@ -529,10 +559,17 @@ ndexApp.controller('searchController',
                             populateUserTable();
                         } else {
                             searchController.userSearchNoResults = true;
-                        }
+                        };
                         searchController.userSearchInProgress = false;
+                        if (searchController.searchType.toLowerCase() != "all") {
+                            ndexSpinner.stopSpinner();
+                        };
+
                     },
                     function (error) {
+                        if (searchController.searchType.toLowerCase() != "all") {
+                            ndexSpinner.stopSpinner();
+                        };
                         searchController.errors.push(error.data);
                         searchController.userSearchInProgress = false;
                     });
@@ -655,8 +692,14 @@ ndexApp.controller('searchController',
                             searchController.groupSearchNoResults = true;
                         }
                         searchController.groupSearchInProgress = false;
+                        if (searchController.searchType.toLowerCase() != "all") {
+                            ndexSpinner.stopSpinner();
+                        };
                     },
                     function (error) {
+                        if (searchController.searchType.toLowerCase() != "all") {
+                            ndexSpinner.stopSpinner();
+                        };
                         searchController.errors.push(error.data);
                         searchController.groupSearchInProgress = false;
                         searchController.groupSearchNoResults = true;
@@ -672,8 +715,7 @@ ndexApp.controller('searchController',
 
                 if (rowEntity.subnetworks && (rowEntity.subnetworks > 1)) {
                     var title = "Warning";
-                    var message = "This network is part of a Cytoscape collection with " +
-                        rowEntity.subnetworks + " subnetworks and cannot be edited in NDEx."
+                    var message = "This network is part of a Cytoscape collection and cannot be operated on or edited in NDEx.";
                     ndexNavigation.genericInfoModal(title, message);
                 } else {
                     uiMisc.showNetworkWarningsOrErrors(rowEntity, searchController.networkSearchResults);
@@ -703,6 +745,8 @@ ndexApp.controller('searchController',
             searchController.groupSearchNoResults = true;
             searchController.userSearchNoResults = true;
             searchController.networkSearchNoResults = true;
+
+            ndexSpinner.startSpinner(spinnerSearchPageId);
 
              if (searchController.searchType === 'All'){
                  if (searchController.searchTermExpansionSelected) {

@@ -20,6 +20,7 @@
 
         <span style="float:left; margin-right:1%">
             <show-network-sets-modal
+                    controller-name='searcher'
                     my-account-controller='searcher'
                     my-class="{{(searcher.networkTableRowsSelected == 0) ?
                             'btn btn-primary customButtonWidth disabled' : 'btn btn-primary customButtonWidth'}}">
@@ -29,6 +30,11 @@
 
     <div id="searchResultTableId" class="col-md-10">
 
+        <div class="row">
+            <div id="spinnerSearchPageId" style="position:relative; top:16em"></div>
+        </div>
+
+
         <tabset>
 
             <tab
@@ -37,7 +43,7 @@
                     active="activeTab.Networks">
                 <div ng-show='searcher.networkSearchInProgress'><i>Finding Networks...</i></div>
                 <div ng-show='searcher.networkSearchNoResults'><i>No Networks Found.</i></div>
-                <div ng-show='searcher.networkSearchResults' ui-grid-selection ui-grid="networkSearchGridOptions"
+                <div ng-show='searcher.showNetworkTable' ui-grid-selection ui-grid="networkSearchGridOptions"
                      ui-grid-resize-columns style="height:540px;"></div>
 
             </tab>

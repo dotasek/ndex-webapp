@@ -13,7 +13,7 @@
                 {{myAccountController.displayedUser.firstName}} {{myAccountController.displayedUser.lastName}}
             </h4>
             <div>
-                <small>{{myAccountController.displayedUser.accountName}}</small>
+                {{myAccountController.displayedUser.userName}}
             </div>
             <div class="wrapLongLine">
                 <a href="{{myAccountController.displayedUser.website}}" target="_blank">
@@ -50,52 +50,70 @@
                         <div class="btn-group dropdown">
 
                            <button id="editNetworksPropertiesButton" type="button" data-toggle="dropdown"
-                                   class="btn btn-primary dropdown-toggle customButtonWidth"
-                                   ng-class="enableEditAndExportBulkButtons ? 'btn btn-primary customButtonWidth' :
-                                        'btn btn-primary customButtonWidth disabled'">
+                                   ng-show="!isEditProfileDropDownButtonDisabled()"
+                                   class="btn btn-primary dropdown-toggle customButtonWidth">
                                {{myAccountController.editProfilesLabel}}
                                <span class="caret"></span>
                            </button>
 
+                            <span title="{{editProfileDropDownBulkButtonTitle}}" ng-show="isEditProfileDropDownButtonDisabled()">
+                                <a class="btn btn-primary customButtonWidth disabled">
+                                    {{myAccountController.editProfilesLabel}}
+                                    <span class="caret"></span>
+                                </a>
+                            </span>
+
                            <ul class="dropdown-menu" role="menu" aria-labelledby="editNetworksPropertiesButton">
-                               <li ng-class="enableEditPropertiesBulkButton ? '' : 'disabled'">
+
+                                <li style="margin: 3px 0" ng-show="!enableEditPropertiesBulkButton" class="disabled">
+                                   <a title="{{changeDescriptionButtonTitle}}">Change Description</a>
+                               </li>
+                               <li style="margin: 3px 0" ng-show="enableEditPropertiesBulkButton">
                                    <bulk-change-network-property
                                            ndex-data='myAccountController'
                                            directive-title="Change Description of Selected Networks"
                                            directive-action="description"
                                            directive-description="Change Descriptions of the selected networks to the one below:"
-                                           title="{{enableEditPropertiesBulkButton ?
-                                                'Change Description of the selected networks' :
-                                                '1 or more selected networks are Cytoscape collections with multiple subnetworks and cannot be edited in NDEx.'}}"
+                                           title="Change Description of the selected networks"
                                            directive-label="Change Description">
                                     </bulk-change-network-property>
                                </li>
-                               <li ng-class="enableEditPropertiesBulkButton ? '' : 'disabled'">
+
+
+                               <li style="margin: 3px 0" ng-show="!enableEditPropertiesBulkButton" class="disabled">
+                                   <a title="{{changeReferenceButtonTitle}}">Change Reference</a>
+                               </li>
+                               <li style="margin: 3px 0" ng-show="enableEditPropertiesBulkButton">
                                    <bulk-change-network-property
                                            ndex-data='myAccountController'
                                            directive-title="Change Reference of Selected Networks"
                                            directive-action="reference"
                                            directive-description="Change Reference of the selected networks to the one below:"
-                                           title="{{enableEditPropertiesBulkButton ?
-                                                'Change Reference of the selected networks' :
-                                                '1 or more selected networks are Cytoscape collections with multiple subnetworks and cannot be edited in NDEx.'}}"
+                                           title="Change Reference of the selected networks"
                                            directive-label="Change Reference">
                                    </bulk-change-network-property>
 
                                </li>
-                               <li ng-class="enableEditPropertiesBulkButton ? '' : 'disabled'">
+                               <li style="margin: 3px 0" ng-show="!enableEditPropertiesBulkButton" class="disabled">
+                                   <a title="{{changeVersionButtonTitle}}">Change Version</a>
+                               </li>
+                               <li style="margin: 3px 0" ng-show="enableEditPropertiesBulkButton">
                                    <bulk-change-network-property
                                            ndex-data='myAccountController'
                                            directive-title="Change Version of Selected Networks"
                                            directive-action="version"
                                            directive-description="Change Versions of the selected networks to the one below:"
-                                           title="{{enableEditPropertiesBulkButton ?
-                                                'Change Version of the selected networks' :
-                                                '1 or more selected networks are Cytoscape collections with multiple subnetworks and cannot be edited in NDEx.'}}"
+                                           title="Change Version of the selected networks"
                                            directive-label="Change Version">
                                    </bulk-change-network-property>
                                </li>
-                               <li>
+
+
+
+                               <li style="margin: 3px 0" ng-show="!enableChangeVisibilityBulkButton" class="disabled">
+                                   <a title="{{changeVisibilityButtonTitle}}">Change Visibility</a>
+                               </li>
+                               <li style="margin: 3px 0" ng-show="enableChangeVisibilityBulkButton">
                                    <bulk-change-network-system-property
                                            ndex-data='myAccountController'
                                            directive-title="Change Visibility of Selected Networks"
@@ -105,14 +123,19 @@
                                            directive-label="Change Visibility">
                                    </bulk-change-network-system-property>
                                </li>
-                               <li>
+
+                               <li style="margin: 3px 0" ng-show="!enableSetReadOnlyBulkButton" class="disabled">
+                                   <a title="{{setReadOnlNetworkButtonTitle}}">Set Read-Only</a>
+                               </li>
+
+                               <li style="margin: 3px 0" ng-show="enableSetReadOnlyBulkButton">
                                    <bulk-change-network-system-property
                                            ndex-data='myAccountController'
                                            directive-title="Change Read-Only Flag of Selected Networks"
                                            directive-action="readOnly"
                                            directive-description="Change Read-Only flag of the selected networks to the one below:"
-                                           title="Set/Unset Read-Only Flag of the selected networks"
-                                           directive-label="Set/Unset Read-Only Flag">
+                                           title="Change Read-Only Flag of the selected networks"
+                                           directive-label="Set Read-Only">
                                    </bulk-change-network-system-property>
                                </li>
                            </ul>
@@ -123,14 +146,19 @@
                         <span>
                            <!-- <a ng-class="enableEditAndExportBulkButtons ? 'btn btn-primary customButtonWidth' :'btn btn-primary customButtonWidth disabled'">-->
                                 <bulk-export-network
+                                        title="{{exportNetworkButtonTitle}}"
                                         ndex-data='myAccountController'
-                                        my-class="{{enableEditAndExportBulkButtons ?
+                                        my-class="{{enableExportBulkButton ?
                                             'btn btn-primary customButtonWidth' :
                                             'btn btn-primary customButtonWidth disabled'}}">
                                 </bulk-export-network>
                         </span>
 
-                        <span>
+
+                        <!-- NB: title directive should be in the span element below; if it is moved to a element,
+                             it wil not work for case when button is disabled!!!
+                         -->
+                        <span title="{{shareNetworkButtonTitle}}">
                             <a ng-class="enableShareBulkButton ? 'btn btn-primary customButtonWidth' :
                                     'btn btn-primary customButtonWidth disabled'"
                                ng-click="myAccountController.manageBulkAccess('/access/bulk/network', main.getCurrentUserId())">
@@ -138,13 +166,30 @@
                             </a>
                         </span>
 
-                        <show-network-sets-modal
-                                my-account-controller='myAccountController'
-                                my-class="btn btn-primary customButtonWidth">
-                        </show-network-sets-modal>
 
-                        <span>
-                            <a class="btn btn-primary customButtonWidth"
+
+
+
+                        <span title="{{addToMySetsButtonTitle}}" ng-show="!enableAddToMySetsBulkButton">
+                            <a class="btn btn-primary customButtonWidth disabled">
+                                Add To My Sets
+                            </a>
+                        </span>
+                        <spn ng-show="enableAddToMySetsBulkButton">
+                            <show-network-sets-modal
+                                    controller-name='myAccountController'
+                                    my-account-controller='myAccountController'
+                                    my-class="btn btn-primary customButtonWidth">
+                            </show-network-sets-modal>
+                        </spn>
+
+
+                        <!-- NB: title directive should be in the span element below; if it is moved to a element,
+                            it wil not work for case when button is disabled!!!
+                        -->
+                        <span title="{{deleteNetworkButtonTitle}}">
+                            <a ng-class="enableDeleteBulkButton ? 'btn btn-primary customButtonWidth' :
+                                    'btn btn-primary customButtonWidth disabled'"
                                ng-click="myAccountController.checkAndDeleteSelectedNetworks()">
                                 {{myAccountController.deleteNetworksLabel}}
                             </a>
@@ -177,25 +222,21 @@
                         </span>
 
                         <span>
-                            <a class="btn btn-primary customButtonWidth"
-                               ng-click="myAccountController.acceptSelectedRequests()">
-                                Accept Requests
+                            <a ng-class="enabledManageRequestsBulkButton() ? 'btn btn-primary customButtonWidth' :
+                                        'btn btn-primary customButtonWidth disabled'"
+                               ng-click="myAccountController.manageSelectedRequests()">
+                                Manage Requests
                             </a>
                         </span>
 
                         <span>
-                            <a class="btn btn-primary customButtonWidth"
-                               ng-click="myAccountController.declineSelectedRequests()">
-                                Decline Requests
-                            </a>
-                        </span>
-
-                        <span>
-                            <a class="btn btn-primary customButtonWidth"
+                            <a ng-class="enabledBulkDownloadButton() ? 'btn btn-primary customButtonWidth' :
+                                        'btn btn-primary customButtonWidth disabled'"
                                ng-click="myAccountController.downloadSelectedTasks()">
                                 Download
                             </a>
                         </span>
+
 
                     </span>
 
@@ -216,14 +257,14 @@
                            </button>
 
                            <ul class="dropdown-menu" role="menu" aria-labelledby="editAccountButton">
-                               <li>
+                               <li style="margin: 3px 0">
                                    <edit-user-modal ndex-data='myAccountController.displayedUser'></edit-user-modal>
                                </li>
-                               <li>
+                               <li style="margin: 3px 0">
                                    <change-password-modal></change-password-modal>
                                </li>
-                               <li class="disabled"><a href="#">Notification Settings</a></li>
-                               <li>
+                               <li class="disabled" style="margin: 3px 0"><a href="#">Notification Settings</a></li>
+                               <li style="margin: 3px 0">
                                    <delete-user></delete-user>
                                </li>
                            </ul>
@@ -287,7 +328,7 @@
                  The use ng-if="tabShown" ... described on the page above introduces another issue:
                  the selected rows on the Networks page get unselected if you select a different tab (i.e., Groups)
                  and come back to Networks tab. -->
-                <div ng-show='showNetworkTable()'>
+                <div ng-show='myAccountController.showNetworkTable'>
                     <div ui-grid-selection
                          ui-grid="networkGridOptions"
                          ui-grid-resize-columns
@@ -297,9 +338,9 @@
                     </div>
                 </div>
 
-                <div class='row' ng-hide='myAccountController.networkSearchResults.length > 0'>
+                <div class='row' ng-hide='myAccountController.showNetworkTable'>
                     <br>
-                    <p class='text-center text-muted'>No Networks to display</p>
+                    <p class='text-center text-muted'>No Networks or Network Sets to display</p>
                 </div>
 
             </tab>

@@ -156,10 +156,11 @@ ndexApp.controller('networkSetController',
             { field: 'Tissue',  enableFiltering: true, maxWidth: 65, cellTemplate: 'views/gridTemplates/tissue.html'},
             { field: 'Nodes', enableFiltering: false, maxWidth: 70 },
             { field: 'Edges', enableFiltering: false, maxWidth: 70 },
-            { field: 'Visibility', enableFiltering: true, maxWidth: 70 },
+            { field: 'Visibility', enableFiltering: true, width: 90, cellTemplate: 'views/gridTemplates/visibility.html'},
             { field: 'Owner', enableFiltering: true, width:80,
                 cellTemplate: 'views/gridTemplates/ownedBy.html'},
-            { field: 'Last Modified', enableFiltering: false, maxWidth:120, cellFilter: "date:'short'" }
+            { field: 'Last Modified', enableFiltering: false, maxWidth:120, cellFilter: "date:'short'" },
+            { field: 'indexed', enableFiltering: false,  visible: false}
         ];
         $scope.networkGridApi.grid.options.columnDefs = columnDefs;
         refreshNetworkTable();
@@ -171,7 +172,7 @@ ndexApp.controller('networkSetController',
             return "";
         }
 
-        // convert HTML to markdown; toMarkdown is defined in to-markdown.min.scripts
+        // convert HTML to markdown; toMarkdown is defined in to-markdown.min.js
         var markDown = toMarkdown(html);
 
         // after using toMarkdown() at previous statement, markDown var can still contain
@@ -220,6 +221,7 @@ ndexApp.controller('networkSetController',
             var nodes       = network['nodeCount'];
             var edges       = network['edgeCount'];
             var owner       = network['owner'];
+            var indexed     = network['indexed'];
             var visibility  = network['visibility'];
             var modified    = new Date( network['modificationTime'] );
 
@@ -249,7 +251,8 @@ ndexApp.controller('networkSetController',
                 "ownerUUID"     :   network['ownerUUID'],
                 "name"          :   networkName,
                 "errorMessage"  :   errorMessage,
-                "subnetworks"   :   noOfSubNetworks
+                "subnetworks"   :   noOfSubNetworks,
+                "indexed"       :   indexed
             };
             $scope.networkGridOptions.data.push(row);
         }
@@ -494,9 +497,12 @@ ndexApp.controller('networkSetController',
 
     networkSetController.showURLInClipboardMessage = function() {
 
-        var message =
-            "The URL for this network set was copied to the clipboard.";
-        alert(message);
+        var closeModalInterval = 1000; // ms
+
+        var title    = "URL Copied To Clipboard";
+        var message  = "The URL for this network set was copied to the clipboard.";
+
+        ndexNavigation.genericInfoModalAutoClose(title, message, closeModalInterval);
     };
 
     networkSetController.getStatusOfShareableURL = function() {

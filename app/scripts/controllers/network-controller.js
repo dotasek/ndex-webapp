@@ -1,11 +1,11 @@
 ndexApp.controller('networkController',
     ['provenanceService','networkService', 'ndexService', 'ndexConfigs', 'cyService','cxNetworkUtils',
          'ndexUtility', 'ndexHelper', 'ndexNavigation',
-        'sharedProperties', '$scope', '$routeParams', '$modal', '$modalStack',
+        'sharedProperties', '$scope', '$rootScope', '$routeParams', '$modal', '$modalStack',
         '$route', '$location', 'uiGridConstants', 'uiMisc', 'ndexSpinner', /*'$filter', '$location','$q',*/
         function ( provenanceService, networkService, ndexService, ndexConfigs, cyService, cxNetworkUtils,
                    ndexUtility, ndexHelper, ndexNavigation,
-                  sharedProperties, $scope, $routeParams, $modal, $modalStack,
+                  sharedProperties, $scope, $rootScope, $routeParams, $modal, $modalStack,
                   $route , $location, uiGridConstants, uiMisc, ndexSpinner /*, $filter /*, $location, $q */)
         {
             var self = this;
@@ -13,9 +13,9 @@ ndexApp.controller('networkController',
             var cy;
 
             var currentNetworkSummary;
-
             var networkExternalId = $routeParams.identifier;
-            var accesskey = $routeParams.accesskey;
+            var accesskey         = $routeParams.accesskey;
+
 
             sharedProperties.setCurrentNetworkId(networkExternalId);
 
@@ -28,6 +28,7 @@ ndexApp.controller('networkController',
 
             networkController.privilegeLevel = "None";
             networkController.currentNetworkId = networkExternalId;
+            networkController.accesskey = accesskey;
 
             networkController.errors = []; // general page errors
             networkController.queryErrors = [];
@@ -64,11 +65,12 @@ ndexApp.controller('networkController',
             // for copying it to clipboard if this Network is PUBLIC
             networkController.networkURL = uiMisc.buildNetworkURL(null, networkExternalId);
 
+
             // close any modal if opened.
             // We need to close a modal in case we come to this page
             // if we cloned a network and followed a link to the newly cloned network
             // from the "Network Cloned" information modal.
-            $modalStack.dismissAll('close');
+            //$modalStack.dismissAll('close');
 
             networkController.tabs = [
                 {"heading": "Network Info", 'active':true},
@@ -87,6 +89,16 @@ ndexApp.controller('networkController',
             networkController.isNetworkOwner = false;
 
             networkController.otherProperties = [];
+
+
+            $scope.editPropertiesTitle       = "";
+            $scope.requestDOITitle           = "";
+            $scope.exportTitle               = "";
+            $scope.upgradePermissionTitle    = "";
+            $scope.shareTitle                = "";
+            $scope.deleteTitle               = "";
+
+
 
             $scope.disableQuery = false;
             $scope.warningQuery = false;
@@ -114,9 +126,8 @@ ndexApp.controller('networkController',
             networkController.hasMultipleSubNetworks = function() {
                 var retValue = false;
                 if (networkController.noOfSubNetworks > 1) {
-                    networkController.title =
-                        "This network is part of a Cytoscape collection with " +
-                        networkController.noOfSubNetworks + " subnetworks and cannot be edited in NDEx.";
+                    $scope.editPropertiesButtonTitle =
+                        "This network is part of a Cytoscape collection and cannot be operated on or edited in NDEx";
                     retValue = true;
                 };
                 return retValue;
@@ -687,13 +698,18 @@ ndexApp.controller('networkController',
                 var attributeValue = attribute;
                 var attr = attribute.toLowerCase();
 
-                if (attr.startsWith('http://')
+                if ((attr.startsWith('http://') || attr.startsWith('https://'))
                     && !attr.startsWith('http://biopax') && !attr.startsWith('http://www.biopax')
                     && !attr.startsWith('http://purl') && !attr.startsWith('http://www.purl')) {
 
-                    attributeValue = '<a target="_blank" href="' + attribute + '">' + attribute + '</a>';
+                    attributeValue = '<a target="_blank" href="' + attribute + '">External Link</a>';
                     return attributeValue;
-                }
+
+                } else if (attr.startsWith('www.')) {
+                    attributeValue = '<a target="_blank" href="http://' + attribute + '">External Link</a>';
+                    return attributeValue;
+
+                };
 
                 var splitString = attribute.split(":");
                 if ((splitString.length != 2) && (splitString.length != 3)) {
@@ -1360,7 +1376,7 @@ ndexApp.controller('networkController',
                                     menuList.push(ndexExternalLinks);
                                 };
                             };
-
+                            /*
                             n.qtip({
                                 content:
                                   menuList.join('<br />\n'),
@@ -1376,7 +1392,7 @@ ndexApp.controller('networkController',
                                     }
                                 }
                             });
-
+                            */
                         });
 
                         // handles edges
@@ -2016,7 +2032,7 @@ ndexApp.controller('networkController',
                 networkController.queryErrors = [];
 
                 ndexSpinner.startSpinner(spinnerNetworkPageId);
-                var edgeLimit = config.networkQueryLimit;
+                var edgeLimit = ndexSettings.networkQueryLimit;
                 networkService.neighborhoodQuery(networkController.currentNetworkId, accesskey, networkController.searchString, networkController.searchDepth.value, edgeLimit)
                     .success(
                         function (network) {
@@ -2062,7 +2078,7 @@ ndexApp.controller('networkController',
                             if (error.status != 0) {
                                 if( error.data.message == "Error in queryForSubnetwork: Result set is too large for this query.")
                                 {
-                                    networkController.queryErrors.push("Error Querying: The maximum query size is " + config.networkQueryLimit);
+                                    networkController.queryErrors.push("Error Querying: The maximum query size is " + ndexSettings.networkQueryLimit);
                                 }
                                 else
                                 {
@@ -2096,7 +2112,7 @@ ndexApp.controller('networkController',
                 $route.reload();
             };
 
-            // this is used by showNetworkSetsModal directive in ui-services.scripts for adding
+            // this is used by showNetworkSetsModal directive in ui-services.js for adding
             // selected networks to selected sets.  In network-controller there is only one "selected" network
             // (the current one), so we add it to the list and return to the caller,
             networkController.getIDsOfSelectedNetworks = function () {
@@ -2160,7 +2176,7 @@ ndexApp.controller('networkController',
                 networkController.queryWarnings = [];
                 networkController.queryErrors = [];
 
-                var networkQueryLimit = config.networkQueryLimit;
+                var networkQueryLimit = ndexSettings.networkQueryLimit;
 
                 ndexSpinner.startSpinner(spinnerNetworkPageId);
 
@@ -2246,7 +2262,7 @@ ndexApp.controller('networkController',
                             if (error.status != 0) {
                                 if( error.data.message == "Error in queryForSubnetwork: Result set is too large for this query.")
                                 {
-                                    networkController.queryErrors.push("Error Querying: The maximum query size is " + config.networkQueryLimit);
+                                    networkController.queryErrors.push("Error Querying: The maximum query size is " + ndexSettings.networkQueryLimit);
                                 }
                                 else
                                 {
@@ -2258,11 +2274,12 @@ ndexApp.controller('networkController',
             };
 
             networkController.showURLInClipboardMessage = function() {
+                var closeModalInterval = 1000; // ms
 
-                var message =
-                    "The URL for this network was copied to the clipboard." ;
+                var title   = "URL Copied To Clipboard";
+                var message = "The URL for this network was copied to the clipboard. ";
 
-                alert(message);
+                ndexNavigation.genericInfoModalAutoClose(title, message, closeModalInterval);
             };
 
             networkController.getStatusOfShareableURL = function() {
@@ -2318,7 +2335,7 @@ ndexApp.controller('networkController',
                             networkController.noOfSubNetworks = uiMisc.getNoOfSubNetworks(network);
 
                             if ($scope.disableQuery && networkController.noOfSubNetworks < 2) {
-                                networkController.title = $scope.disabledQueryTooltip;
+                                $scope.editPropertiesButtonTitle = $scope.disabledQueryTooltip;
                             };
 
                             if (networkController.subNetworkId != null) {
@@ -2372,6 +2389,14 @@ ndexApp.controller('networkController',
                                 networkController.getStatusOfShareableURL();
                             };
 
+                            if (networkController.hasMultipleSubNetworks()) {
+                                setTitlesForCytoscapeCollection();
+                            } else {
+                                setDOITitle();
+                                setShareTitle();
+                            };
+                            setEditPropertiesTitle();
+                            setDeleteTitle();
                         }
                     )
                     .error(
@@ -2379,8 +2404,74 @@ ndexApp.controller('networkController',
                             displayErrorMessage(error);
                         }
                     );
-
             };
+
+            var setTitlesForCytoscapeCollection = function() {
+                $scope.requestDOITitle = "This network is a Cytoscape collection. Cannot request DOI";
+                $scope.exportTitle     = "This network is a Cytoscape collection and cannot be exported";
+                $scope.upgradePermissionTitle =
+                    "This network is a Cytoscape collection and cannot be edited in NDEx";
+                $scope.editPropertiesButtonTitle = "This network is a Cytoscape collection and cannot be edited in NDEx";
+
+                if (!networkController.isNetworkOwner) {
+                    $scope.shareTitle  = "Unable to share this network: you do not own it";
+                    $scope.deleteTitle = "Unable to delete this network: you do not own it";
+                };
+            };
+
+            var setDOITitle = function() {
+                // we set DOI title only if Request DOI option of More menu is disabled:
+                //      !networkController.isNetworkOwner || networkController.readOnlyChecked ||
+                //          networkController.hasMultipleSubNetworks())'
+                if (!networkController.isNetworkOwner) {
+                    $scope.requestDOITitle = "Unable to request DOI for this network: you do not own it ";
+                } else if (networkController.readOnlyChecked) {
+                    $scope.requestDOITitle = "Unable to request DOI for this network: it is read-only ";
+                };
+            };
+
+            var setUpgradePermissionTitle = function() {
+                // we set Upgrade Permission title only if Upgrade Permission option of More menu is disabled:
+                // networkController.isAdmin || networkController.canEdit || networkController.hasMultipleSubNetworks()
+                if (networkController.hasMultipleSubNetworks()) {
+                    $scope.upgradePermissionTitle =
+                        "This network is a Cytoscape collection and cannot be edited in NDEx";
+                } else if (networkController.isNetworkOwner) {
+                    $scope.upgradePermissionTitle = "Unable to Upgrade Permission for this network: you already own it ";
+                } else if (networkController.privilegeLevel.toLowerCase() == 'edit' ) {
+                    $scope.upgradePermissionTitle = "Unable to Upgrade Permission for this network: you already have Edit privilege ";
+                };
+            };
+
+            var setShareTitle = function() {
+                // we set Share title only if Share option of More menu is disabled:
+                // !networkController.isAdmin
+                if (!networkController.isNetworkOwner) {
+                    $scope.shareTitle = "Unable to Share this network: you do not own it ";
+                };
+            };
+
+            var setDeleteTitle = function() {
+                // we set Share title only if Share option of More menu is disabled:
+                // !(networkController.isAdmin && !networkController.readOnlyChecked)
+                if (!networkController.isNetworkOwner) {
+                    $scope.deleteTitle = "Unable to Delete this network: you do not own it ";
+                } else if (networkController.readOnlyChecked) {
+                    $scope.deleteTitle = "Unable to Delete this network: it is read-only ";
+                };
+            };
+
+            var setEditPropertiesTitle = function() {
+                // !networkController.isAdmin || networkController.hasMultipleSubNetworks()
+                if (networkController.hasMultipleSubNetworks()) {
+                    $scope.editPropertiesButtonTitle = "This network is a Cytoscape collection and cannot be edited in NDEx";
+                } else if (!networkController.isNetworkOwner) {
+                    $scope.editPropertiesButtonTitle = "Unable to edit this network: you do not have privilege to modify it ";
+                } else if (networkController.readOnlyChecked) {
+                    $scope.editPropertiesButtonTitle = "Unable to edit this network: it is read-only ";
+                };
+            };
+
 
             var getNumberOfBelNetworkNamespaces = function()
             {
@@ -2426,15 +2517,17 @@ ndexApp.controller('networkController',
                                 if (myMembership == 'ADMIN') {
                                     networkController.isAdmin = true;
                                     networkController.privilegeLevel = "Admin";
-                                }
+                                };
                                 if (myMembership == 'WRITE') {
                                     networkController.canEdit = true;
                                     networkController.privilegeLevel = "Edit";
-                                }
+                                };
                                 if (myMembership == 'READ') {
                                     networkController.canRead = true;
                                     networkController.privilegeLevel = "Read";
-                                }
+                                };
+                                setEditPropertiesTitle();
+                                setUpgradePermissionTitle();
                             }
                             callback();
                         },
@@ -2449,7 +2542,9 @@ ndexApp.controller('networkController',
                 ndexService.setNetworkSystemPropertiesV2(networkController.currentNetworkId,
                     "readOnly", networkController.readOnlyChecked,
                     function(data, networkId, property, value) {
-                        // success, do nothing
+                        setDOITitle();
+                        setDeleteTitle();
+                        setEditPropertiesTitle();
                     },
                     function(error, networkId, property, value) {
                         console.log("unable to make network Read-Only");
@@ -2708,36 +2803,49 @@ ndexApp.controller('networkController',
                 var message = networkName +
                     'will be cloned to your account. <br><br> Are you sure you want to proceed?';
 
-                var dismissModal = true;
+                var dismissModal = false;
+
                 ndexNavigation.openConfirmationModal(title, message, "Confirm", "Cancel", dismissModal,
-                    function () {
+                    function ($modalInstance) {
+
+                        $rootScope.errors = null;
+                        $rootScope.confirmButtonDisabled = true;
+                        $rootScope.cancelButtonDisabled = true;
+                        $rootScope.progress = "Cloning network in progress ...";
+
+                        var confirmationSpinnerId = "confirmationSpinnerId";
+                        ndexSpinner.startSpinner(confirmationSpinnerId);
+
                         ndexService.cloneNetworkV2(networkController.currentNetworkId,
                             function(data, status, headers, config, statusText) {
-
-                                var clonedNetworkUUID = data.split("/").pop();
-                                title = "Network Cloned";
-                                message  = networkName + " cloned to your account.<br><br>";
-                                message = message +
-                                    "Follow this <a href='#/network/" + clonedNetworkUUID + "'>link</a> " +
-                                    " to go the clone of <strong>" + networkController.currentNetwork.name +
-                                    "</strong>.";
-
-                                title = "Network Cloned";
-                                ndexNavigation.genericInfoModal(title, message);
+                                ndexSpinner.stopSpinner();
+                                $modalInstance.dismiss();
+                                delete $rootScope.errors;
+                                delete $rootScope.confirmButtonDisabled;
+                                delete $rootScope.cancelButtonDisabled;
+                                delete $rootScope.progress;
                             },
                             function(error) {
+                                ndexSpinner.stopSpinner();
                                 title = "Unable to Clone Network";
                                 message  = networkName + " wasn't cloned to your account.";
 
                                 if (error.message) {
-                                    message = message + '<br><br>' + error.message;
+                                    message = message + '<br>' + error.message;
                                 };
+                                $rootScope.errors = message;
+                                delete $rootScope.progress;
+                                delete $rootScope.cancelButtonDisabled;
 
-                                ndexNavigation.genericInfoModal(title, message);
                             });
                     },
-                    function () {
+                    function ($modalInstance) {
                         // User selected Cancel; return
+                        $modalInstance.dismiss();
+                        delete $rootScope.errors;
+                        delete $rootScope.confirmButtonDisabled;
+                        delete $rootScope.cancelButtonDisabled;
+                        delete $rootScope.progress;
                         return;
                     });
 
