@@ -123,7 +123,7 @@
                     };
 
                     $modal.open({
-                        templateUrl: 'pages/generic-info-modal.html',
+                        templateUrl: 'views/generic-info-modal.html',
                         controller: InfoCtrl,
                         backdrop: 'static'
                     });
@@ -172,7 +172,7 @@
                     };
 
                     $modal.open({
-                        templateUrl: 'pages/receivedBulkRequests.html',
+                        templateUrl: 'views/receivedBulkRequests.html',
                         controller: ConfirmCtrl,
                         backdrop: 'static'
                     });

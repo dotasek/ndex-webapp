@@ -2383,7 +2383,7 @@ ndexApp.controller('myAccountController',
             myAccountController.genericInfoModal = function(title, message)
             {
                 var   modalInstance = $modal.open({
-                    templateUrl: 'pages/generic-info-modal.html',
+                    templateUrl: 'views/generic-info-modal.html',
                     scope: $scope,
 
                     controller: function($scope, $modalInstance) {
