@@ -1059,14 +1059,14 @@ ndexApp.controller('networkController',
                         var ctx = backgroundLayer.getCanvas().getContext("2d");
                         ctx.fillStyle = cxBGColor;
                         ctx.fillRect(0, 0, canvas.width, canvas.height);
-                        networkController.bgColor = cxBGColor;
-                    } else {
-                        // no background color for Canvas - set to default
-                        resetBackgroundColor();
-                    }
+                       
+                    } 
+
+                    resetBackgroundColor();
 
                     var cyAnnotationService = new cyannotationCx2js.CxToCyCanvas(cyService);
                     cyAnnotationService.drawAnnotationsFromNiceCX(cy, cxNetwork);
+
                     // this is a workaround to catch select, deselect in one event. Otherwise if a use select multiple nodes/
                     // edges, the event is triggered for each node/edge.
                     cy.on('select unselect', function () {
